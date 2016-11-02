@@ -1,0 +1,2718 @@
+<!DOCTYPE html>
+<!-- saved from url=(0073)http://www.benoitschweblin.com/2013/03/run-jetty-in-maven-life-cycle.html -->
+<html class="v2" dir="ltr" xmlns="http://www.w3.org/1999/xhtml" xmlns:b="http://www.google.com/2005/gml/b" xmlns:data="http://www.google.com/2005/gml/data" xmlns:expr="http://www.google.com/2005/gml/expr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="IE=EmulateIE7" http-equiv="X-UA-Compatible">
+<meta content="width=1100" name="viewport">
+
+<meta content="blogger" name="generator">
+<link href="http://www.benoitschweblin.com/favicon.ico" rel="icon" type="image/x-icon">
+<link href="http://www.benoitschweblin.com/2013/03/run-jetty-in-maven-life-cycle.html" rel="canonical">
+<link rel="alternate" type="application/atom+xml" title="Benoit Schweblin &#39;s/blo//g&#39; - Atom" href="http://www.benoitschweblin.com/feeds/posts/default">
+<link rel="alternate" type="application/rss+xml" title="Benoit Schweblin &#39;s/blo//g&#39; - RSS" href="http://www.benoitschweblin.com/feeds/posts/default?alt=rss">
+<link rel="service.post" type="application/atom+xml" title="Benoit Schweblin &#39;s/blo//g&#39; - Atom" href="https://www.blogger.com/feeds/5845022975130610385/posts/default">
+
+<link rel="alternate" type="application/atom+xml" title="Benoit Schweblin &#39;s/blo//g&#39; - Atom" href="http://www.benoitschweblin.com/feeds/1032903560279782968/comments/default">
+<!--[if IE]><script type="text/javascript" src="https://www.blogger.com/static/v1/jsbin/3382512426-ieretrofit.js"></script>
+<![endif]-->
+<link href="./Run Jetty in the Maven life-cycle_files/jetty_logo.png" rel="image_src">
+<link href="https://plus.google.com/109528932743706586931" rel="publisher">
+<meta content="In the Java EE kingdom, JBoss Application Server is king. But sometimes it&#39;s nice to have a lighter container like Jetty to run during our development phases." name="description">
+<meta content="http://www.benoitschweblin.com/2013/03/run-jetty-in-maven-life-cycle.html" property="og:url">
+<meta content="Run Jetty in the Maven life-cycle" property="og:title">
+<meta content="In the Java EE kingdom, JBoss Application Server is king. But sometimes it&#39;s nice to have a lighter container like Jetty to run during our development phases." property="og:description">
+<meta content="http://2.bp.blogspot.com/-xIRa1eIHbY4/UTvtIVot4XI/AAAAAAAADH8/bkSjY2_P5jg/w1200-h630-p-nu/jetty_logo.png" property="og:image">
+<!--[if IE]> <script> (function() { var html5 = ("abbr,article,aside,audio,canvas,datalist,details," + "figure,footer,header,hgroup,mark,menu,meter,nav,output," + "progress,section,time,video").split(','); for (var i = 0; i < html5.length; i++) { document.createElement(html5[i]); } try { document.execCommand('BackgroundImageCache', false, true); } catch(e) {} })(); </script> <![endif]-->
+<title>Run Jetty in the Maven life-cycle</title>
+<link type="text/css" rel="stylesheet" href="./Run Jetty in the Maven life-cycle_files/434580396-css_bundle_v2.css">
+<link type="text/css" rel="stylesheet" href="./Run Jetty in the Maven life-cycle_files/authorization.css">
+<style id="page-skin-1" type="text/css"><!--
+/* Variable definitions
+====================
+<Variable name="keycolor" description="Main Color" type="color" default="#66bbdd"/>
+<Group description="Page Text" selector="body">
+<Variable name="body.font" description="Font" type="font"
+default="normal normal 12px Arial, Tahoma, Helvetica, FreeSans, sans-serif"/>
+<Variable name="body.text.color" description="Text Color" type="color" default="#222222"/>
+</Group>
+<Group description="Backgrounds" selector=".body-fauxcolumns-outer">
+<Variable name="body.background.color" description="Outer Background" type="color" default="#66bbdd"/>
+<Variable name="content.background.color" description="Main Background" type="color" default="#ffffff"/>
+<Variable name="header.background.color" description="Header Background" type="color" default="transparent"/>
+</Group>
+<Group description="Links" selector=".main-outer">
+<Variable name="link.color" description="Link Color" type="color" default="#2288bb"/>
+<Variable name="link.visited.color" description="Visited Color" type="color" default="#888888"/>
+<Variable name="link.hover.color" description="Hover Color" type="color" default="#33aaff"/>
+</Group>
+<Group description="Blog Title" selector=".header h1">
+<Variable name="header.font" description="Font" type="font"
+default="normal normal 60px Arial, Tahoma, Helvetica, FreeSans, sans-serif"/>
+<Variable name="header.text.color" description="Title Color" type="color" default="#3399bb" />
+</Group>
+<Group description="Blog Description" selector=".header .description">
+<Variable name="description.text.color" description="Description Color" type="color"
+default="#777777" />
+</Group>
+<Group description="Tabs Text" selector=".tabs-inner .widget li a">
+<Variable name="tabs.font" description="Font" type="font"
+default="normal normal 14px Arial, Tahoma, Helvetica, FreeSans, sans-serif"/>
+<Variable name="tabs.text.color" description="Text Color" type="color" default="#999999"/>
+<Variable name="tabs.selected.text.color" description="Selected Color" type="color" default="#000000"/>
+</Group>
+<Group description="Tabs Background" selector=".tabs-outer .PageList">
+<Variable name="tabs.background.color" description="Background Color" type="color" default="#f5f5f5"/>
+<Variable name="tabs.selected.background.color" description="Selected Color" type="color" default="#eeeeee"/>
+</Group>
+<Group description="Post Title" selector="h3.post-title, .comments h4">
+<Variable name="post.title.font" description="Font" type="font"
+default="normal normal 22px Arial, Tahoma, Helvetica, FreeSans, sans-serif"/>
+</Group>
+<Group description="Date Header" selector=".date-header">
+<Variable name="date.header.color" description="Text Color" type="color"
+default="#666666"/>
+<Variable name="date.header.background.color" description="Background Color" type="color"
+default="transparent"/>
+</Group>
+<Group description="Post Footer" selector=".post-footer">
+<Variable name="post.footer.text.color" description="Text Color" type="color" default="#666666"/>
+<Variable name="post.footer.background.color" description="Background Color" type="color"
+default="#f9f9f9"/>
+<Variable name="post.footer.border.color" description="Shadow Color" type="color" default="#eeeeee"/>
+</Group>
+<Group description="Gadgets" selector="h2">
+<Variable name="widget.title.font" description="Title Font" type="font"
+default="normal bold 11px Arial, Tahoma, Helvetica, FreeSans, sans-serif"/>
+<Variable name="widget.title.text.color" description="Title Color" type="color" default="#000000"/>
+<Variable name="widget.alternate.text.color" description="Alternate Color" type="color" default="#999999"/>
+</Group>
+<Group description="Images" selector=".main-inner">
+<Variable name="image.background.color" description="Background Color" type="color" default="#ffffff"/>
+<Variable name="image.border.color" description="Border Color" type="color" default="#eeeeee"/>
+<Variable name="image.text.color" description="Caption Text Color" type="color" default="#666666"/>
+</Group>
+<Group description="Accents" selector=".content-inner">
+<Variable name="body.rule.color" description="Separator Line Color" type="color" default="#eeeeee"/>
+<Variable name="tabs.border.color" description="Tabs Border Color" type="color" default="transparent"/>
+</Group>
+<Variable name="body.background" description="Body Background" type="background"
+color="#ffffff" default="$(color) none repeat scroll top left"/>
+<Variable name="body.background.override" description="Body Background Override" type="string" default=""/>
+<Variable name="body.background.gradient.cap" description="Body Gradient Cap" type="url"
+default="url(//www.blogblog.com/1kt/simple/gradients_light.png)"/>
+<Variable name="body.background.gradient.tile" description="Body Gradient Tile" type="url"
+default="url(//www.blogblog.com/1kt/simple/body_gradient_tile_light.png)"/>
+<Variable name="content.background.color.selector" description="Content Background Color Selector" type="string" default=".content-inner"/>
+<Variable name="content.padding" description="Content Padding" type="length" default="10px"/>
+<Variable name="content.padding.horizontal" description="Content Horizontal Padding" type="length" default="10px"/>
+<Variable name="content.shadow.spread" description="Content Shadow Spread" type="length" default="40px"/>
+<Variable name="content.shadow.spread.webkit" description="Content Shadow Spread (WebKit)" type="length" default="5px"/>
+<Variable name="content.shadow.spread.ie" description="Content Shadow Spread (IE)" type="length" default="10px"/>
+<Variable name="main.border.width" description="Main Border Width" type="length" default="0"/>
+<Variable name="header.background.gradient" description="Header Gradient" type="url" default="none"/>
+<Variable name="header.shadow.offset.left" description="Header Shadow Offset Left" type="length" default="-1px"/>
+<Variable name="header.shadow.offset.top" description="Header Shadow Offset Top" type="length" default="-1px"/>
+<Variable name="header.shadow.spread" description="Header Shadow Spread" type="length" default="1px"/>
+<Variable name="header.padding" description="Header Padding" type="length" default="30px"/>
+<Variable name="header.border.size" description="Header Border Size" type="length" default="1px"/>
+<Variable name="header.bottom.border.size" description="Header Bottom Border Size" type="length" default="1px"/>
+<Variable name="header.border.horizontalsize" description="Header Horizontal Border Size" type="length" default="0"/>
+<Variable name="description.text.size" description="Description Text Size" type="string" default="140%"/>
+<Variable name="tabs.margin.top" description="Tabs Margin Top" type="length" default="0" />
+<Variable name="tabs.margin.side" description="Tabs Side Margin" type="length" default="30px" />
+<Variable name="tabs.background.gradient" description="Tabs Background Gradient" type="url"
+default="url(//www.blogblog.com/1kt/simple/gradients_light.png)"/>
+<Variable name="tabs.border.width" description="Tabs Border Width" type="length" default="1px"/>
+<Variable name="tabs.bevel.border.width" description="Tabs Bevel Border Width" type="length" default="1px"/>
+<Variable name="date.header.padding" description="Date Header Padding" type="string" default="inherit"/>
+<Variable name="date.header.letterspacing" description="Date Header Letter Spacing" type="string" default="inherit"/>
+<Variable name="date.header.margin" description="Date Header Margin" type="string" default="inherit"/>
+<Variable name="post.margin.bottom" description="Post Bottom Margin" type="length" default="25px"/>
+<Variable name="image.border.small.size" description="Image Border Small Size" type="length" default="2px"/>
+<Variable name="image.border.large.size" description="Image Border Large Size" type="length" default="5px"/>
+<Variable name="page.width.selector" description="Page Width Selector" type="string" default=".region-inner"/>
+<Variable name="page.width" description="Page Width" type="string" default="auto"/>
+<Variable name="main.section.margin" description="Main Section Margin" type="length" default="15px"/>
+<Variable name="main.padding" description="Main Padding" type="length" default="15px"/>
+<Variable name="main.padding.top" description="Main Padding Top" type="length" default="30px"/>
+<Variable name="main.padding.bottom" description="Main Padding Bottom" type="length" default="30px"/>
+<Variable name="paging.background"
+color="#ffffff"
+description="Background of blog paging area" type="background"
+default="transparent none no-repeat scroll top center"/>
+<Variable name="footer.bevel" description="Bevel border length of footer" type="length" default="0"/>
+<Variable name="mobile.background.overlay" description="Mobile Background Overlay" type="string"
+default="transparent none repeat scroll top left"/>
+<Variable name="mobile.background.size" description="Mobile Background Size" type="string" default="auto"/>
+<Variable name="mobile.button.color" description="Mobile Button Color" type="color" default="#ffffff" />
+<Variable name="startSide" description="Side where text starts in blog language" type="automatic" default="left"/>
+<Variable name="endSide" description="Side where text ends in blog language" type="automatic" default="right"/>
+-----------------------------------------------------------
+<----------->Blogger Template Style<------------------------>
+-----------------------------------------------------------
+Template Name  : Myst | Blogger Template
+Author         : Best Theme / Avinash
+Author URI     : http://besttheme.net/
+Created Time   : 17:24 Sunday (IST) - Time in India
+Created Date   : Dec 13, 2011
+------------------------------------------------------------
+<------> Credit> BestTheme.Net / Www.Web2feel.Com    <------->
+-----------------------------------------------------------*/
+#navbar-iframe{display:none;}*{margin: 0px;}
+/*----------------------------------------------------
+{--------}  Reset  {--------}
+----------------------------------------------------*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+border: 0;
+font-style: inherit;
+font-weight: inherit;
+margin: 0;
+outline: 0;
+/*    padding: 0; */
+vertical-align: baseline;
+}
+:focus {
+/* remember to define focus styles! */
+outline: 0;
+}
+ol, ul {
+/*list-style: none;*/
+}
+table {
+/* tables still need 'cellspacing="0"' in the markup */
+border-collapse: separate;
+border-spacing: 0;
+}
+caption, th, td {
+font-weight: normal;
+text-align: left;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+content: "";
+}
+blockquote, q {
+quotes: "" "";
+}
+a img {
+border: 0;
+}
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+display: block;
+}
+/*----------------------------------------------------
+{--------}  Basic  {--------}
+----------------------------------------------------*/
+body {
+font-family: Tahoma,Arial,Century gothic, sans-serif;
+color: #333;
+font-size: 12px;
+background: url(http://1.bp.blogspot.com/-2qQ7kdSG_7I/UTx8VSWGKxI/AAAAAAAADJs/g3-6Pj4nwJM/s0/body.png);
+margin: 0 auto;
+padding: 0px 0px;
+}
+img {
+border: 0;
+margin: 0;
+}
+a {
+color: #008FA8;
+text-decoration: none;
+outline: none;
+}
+a:hover {
+color: #FFA812;
+text-decoration: none;
+}
+blockquote {
+color: #59666f;
+font-style: italic;
+font-family: Georgia;
+padding-left: 15px;
+}
+.clear {
+clear: both;
+}
+table {
+border-collapse: collapse;
+border-spacing: 0;
+border: 1px solid #fff;
+margin: 10px 0;
+}
+table td,table th {
+text-align: left;
+border: 1px solid #fff;
+padding: .4em .8em;
+}
+table th {
+background: #ddd;
+color: #999;
+text-transform: uppercase;
+font-weight: 400;
+border: 1px solid #fff;
+}
+table td {
+border: 1px solid #fff;
+background: #eee;
+color: #555;
+}
+table tr.even td {
+background: #eee;
+border: none;
+}
+table tr:hover td {
+background: #FFF9DF;
+}
+img.centered {
+display: block;
+margin-left: auto;
+margin-right: auto;
+margin-bottom: 10px;
+padding: 0;
+}
+img.alignnone {
+display: inline;
+background: #eee;
+margin: 0 0 10px;
+padding: 5px;
+}
+img.alignright {
+display: inline;
+background: #eee;
+margin: 5px 0 10px 10px;
+padding: 5px;
+}
+img.alignleft {
+display: inline;
+background: #eee;
+margin: 10px 15px 10px 0;
+padding: 5px;
+}
+.aligncenter {
+display: block;
+margin-left: auto;
+margin-right: auto;
+margin-bottom: 10px;
+}
+.social-widget table {
+margin:10px auto;
+}
+.social-widget table td {
+border: 0;
+vertical-align: middle;
+padding: 10px 20px;
+width: 100px;
+}
+.alignright {
+float: right;
+margin: 0 0 10px 10px;
+}
+.alignleft {
+float: left;
+margin: 10px 15px 10px 0;
+}
+.clearfix:after {
+content: ".";
+display: block;
+clear: both;
+visibility: hidden;
+line-height: 0;
+height: 0;
+}
+.clearfix {
+display: inline-block;
+}
+html[xmlns] .clearfix {
+display: block;
+}
+* html .clearfix {
+height: 1%;
+}
+.rounded {
+border-radius: 5px;
+-moz-border-radius: 5px;
+-webkit-border-radius: 5px;
+}
+.boxshadow {
+-moz-box-shadow: 0 0 5px #000;
+-webkit-box-shadow: 0 0 5px #000;
+box-shadow: 0 0 5px #000;
+}
+/*----------------------------------------------------
+{--------}  Outer  {--------}
+----------------------------------------------------*/
+#wrapper {
+width: 1000px;
+margin:auto;
+background:#f6f6f6;
+}
+/*----------------------------------------------------
+{--------}  Header {--------}
+----------------------------------------------------*/
+#masthead {}
+#top {
+height: 120px;
+width: 1000px;
+margin: 0px auto;
+background:url(http://2.bp.blogspot.com/-k88KE2aumJU/UTx8V27PobI/AAAAAAAADJY/F9xmhhZzMYM/s0/top.png) repeat-x;
+}
+#blogname {
+float: left;
+font-family: 'BebasNeueRegular',Arial, Tahoma, Sans-serif;
+}
+#blogname h1 {
+font-size: 48px;
+margin: 40px 10px 0px 20px;
+font-weight: normal;
+line-height: 0.9em;
+}
+#blogname h1 a:link, #blogname h1 a:visited {
+color: #111;
+}
+#blogname h3 {
+font-size: 16px;
+margin-left: 20px;
+font-weight: normal;
+color: #999;
+}
+/*----------------------------------------------------
+{--------}  Top Menu  {--------}
+----------------------------------------------------*/
+#botmenu {
+height: 70px;
+margin: 0px auto;
+background: url(http://2.bp.blogspot.com/-fdtLpd8kOGs/UTx8VZ86D5I/AAAAAAAADJk/KICRfqimdwo/s0/menu.png) repeat-x;
+}
+#submenu {
+margin: 0px auto;
+width: 1000px;
+padding: 0px 0px;
+}
+#submenu ul {
+width: 100%;
+float: left;
+list-style: none;
+margin: 0;
+padding: 0 0px;
+}
+#submenu li {
+float: left;
+list-style: none;
+color: #999;
+text-shadow: 1px 1px 0px #000;
+font-size: 18px;
+font-weight:normal;
+font-family: 'BebasNeueRegular',Arial, Tahoma, Sans-serif;
+}
+#submenu li span.menudescription{
+display:block;
+font-size:10px;
+line-height:14px;
+color:#cbc6bd;
+font-family:Arial, Tahoma, Sans-serif;
+}
+#submenu li a {
+color: #fff;
+display: block;
+margin: 0;
+padding: 25px 20px 5px;
+text-decoration: none;
+position: relative;
+text-shadow: 1px 1px 0px #000;
+height:40px;
+}
+#submenu li a:hover, #submenu li a:active{
+color: #fcca00;
+text-shadow:1px 1px 0px #000;
+background:url(http://1.bp.blogspot.com/-s9JlPVewaCI/UTyAHCCPvTI/AAAAAAAADKc/TzSXB7rlVDE/s0/menua.png) repeat-x;
+}
+#submenu li a.sf-with-ul {
+padding-right: 10px;
+}
+#submenu li .sf-sub-indicator{
+display:none;
+}
+#submenu li ul {
+z-index: 9999;
+position: absolute;
+left: -999em;
+height: auto;
+width: 160px;
+margin: 0px 0px 0px 0px;
+padding: 5px 5px;
+background:url(http://2.bp.blogspot.com/-CIeXuNu0q5I/UTx8VgNjhLI/AAAAAAAADJg/UImaSZW7dDE/s0/submenu.png);
+}
+#submenu li ul li a, #submenu li ul li a:link, #submenu li ul li a:visited {
+color: #ddd;
+text-shadow:1px 1px 0px #890519;
+font-size:11px;
+text-shadow:none;
+width: 150px;
+font-family: Arial, Tahoma, Verdana;
+margin: 0;
+padding: 0px 5px;
+line-height:35px;
+height:35px;
+text-transform: none;
+position: relative;
+}
+#submenu li ul li a:hover, #submenu li ul li a:active {
+background:transparent;
+color: #fff;
+}
+ul.sub-menu li a{
+border-bottom:1px solid #525252;
+}
+#submenu li ul a {
+width: 150px;
+}
+#submenu li ul a:hover, #submenu li ul a:active { }
+#submenu li ul ul {
+margin: -40px 0 0 165px;
+}
+#submenu li:hover ul ul, #submenu li:hover ul ul ul, #submenu li.sfHover ul ul, #submenu li.sfHover ul ul ul {
+left: -999em;
+}
+#submenu li:hover ul, #submenu li li:hover ul, #submenu li li li:hover ul, #submenu li.sfHover ul, #submenu li li.sfHover ul, #submenu li li li.sfHover ul {
+left: auto;
+}
+#submenu li:hover, #submenu li.sfHover {
+position: static;
+}
+/*----------------------------------------------------
+{--------}  Search From  {--------}
+----------------------------------------------------*/
+#search {
+width: 270px;
+padding: 0px;
+margin: 0px 0px 20px 0px;
+display: inline-block;
+height: 31px;
+float: right;
+border: 1px solid #e8e8e8;
+background:#fff;
+}
+#search form {
+margin: 0px 0px 0px 0px;
+padding: 0;
+}
+#search fieldset {
+margin: 0;
+padding: 0;
+border: none;
+}
+#search p {
+margin: 0;
+font-size: 85%;
+}
+#s {
+width: 250px;
+background: transparent;
+margin: 0px 0px 0px 3px;
+padding: 5px 5px;
+height: 20px;
+border: none;
+font: normal 100% "Tahoma", Arial, Helvetica, sans-serif;
+color: #555;
+float: left;
+display: inline;
+}
+#searchsubmit {
+background: #222;
+border: none;
+color: #fff;
+display: block;
+padding: 7px 7px;
+float: right;
+cursor: pointer;
+}
+/*----------------------------------------------------
+{--------}  Below Header  {--------}
+----------------------------------------------------*/
+#casing {
+width: 1000px;
+padding: 0px 0px 0px 0px;
+}
+/*----------------------------------------------------
+{--------}  Content Area {--------}
+----------------------------------------------------*/
+#content {
+width: 670px;
+float: left;
+margin-left: 20px;
+margin-top: 20px;
+}
+#content .section {
+margin: 0;
+}
+.post {
+margin: 0px 0px 20px 0px;
+color: #666;
+padding: 0px 0px 0px 0px;
+background: #fff;
+border: 1px solid #e8e8e8;
+}
+.postim {
+position:relative;
+background:url(http://4.bp.blogspot.com/-0KLocYq3OBk/UTx8VV_oW7I/AAAAAAAADJo/Zadlj7cpVok/s0/footer.png);
+width:668px;
+height:250px;
+}
+img.postimg{
+width:668px;
+min-height:250px;
+}
+.btitle{
+position:absolute;
+left:0px;
+bottom:0px;
+}
+.btitle h2{
+padding:10px 25px;
+background:#111;
+font-family: 'BebasNeueRegular', Arial,Tahoma,Century gothic,sans-serif;
+font-size:24px;
+}
+.btitle h2 a:link,.btitle h2 a:visited {
+padding:0px 0px;
+color:#fff;
+}
+.btitle span{
+background:#ffa812;
+padding:2px 25px;
+color:#fff;
+}
+.btitle span a:link, .btitle span a:visited{
+color:#fff;
+}
+.title {
+margin: 0px 0px;
+padding: 0px 0px;
+font-family: 'BebasNeueRegular', Arial,Tahoma,Century gothic,sans-serif;
+}
+.title  h2 {
+margin: 25px 25px 0px 25px;
+padding:0px 0px 15px 0px;
+font-size: 24px;
+font-weight: normal;
+color: #222;
+line-height: 120%;
+border-bottom:1px solid #ececec;
+}
+.title  h2 a, .title  h2 a:link, .title  h2 a:visited {
+color: #222;
+background-color: transparent;
+}
+.title  h2 a:hover {
+color: #333;
+background-color: transparent;
+}
+.entry {
+margin: 10px 0px 25px 0px;
+padding:0px 25px;
+font-size:15px;
+text-align: justify;
+line-height: 20px;
+font-family: Arial, Verdana;
+font-size: 14px;
+color: #666666;
+}
+.entry img{
+display: block;
+margin-left: auto;
+margin-right: auto;
+margin-bottom: 10px;
+}
+.entry a:link,
+.entry a:visited {
+color: #FF9D00;
+}
+.entry a:hover {
+color: #FF9D00;
+}
+.entry ul li, .entry ol li {
+list-style-position: outside;
+margin-left: 1.6em;
+}
+.entry p, .entry ul, .entry ol, blockquote {
+margin-bottom: 20px;
+line-height: 20px;
+}
+.titlemeta{
+border-top:1px solid #ececec;
+padding:15px 0px;
+margin:0px 25px;
+font-size:10px;
+color: #999;
+}
+.titlemeta a:link,
+.titlemeta a:visited {
+color: #999;
+}
+span.smore{
+float:left;
+padding: 0px 10px 0px 20px;
+background: url(http://2.bp.blogspot.com/-Mk7XWwTgzp8/TxhyZFXw5HI/AAAAAAAAA58/eEPBuIPqf9I/s000/plus.png) left center no-repeat;
+color: #999;
+}
+span.comm {
+float:right;
+padding: 0px 10px 0px 20px;
+background: url(http://4.bp.blogspot.com/-iJPgitLMaaI/TxhyZfk09CI/AAAAAAAAA6E/2u0FZtsqP8Q/s000/comment.png) left center no-repeat;
+}
+span.comm a:link,
+span.comm a:visited {
+color: #999;
+}
+span.comm a:hover {
+color: #999;
+}
+span.slike {
+float:right;
+padding: 0px 0px 0px 20px;
+margin:0px 0px 0px 0px;
+background: url(http://4.bp.blogspot.com/-oFnua9aOx-g/TxhyZmFMVeI/AAAAAAAAA6M/DgBGQDI03pc/s000/heart.png) left center no-repeat;
+}
+span.slike a:link,
+span.slike a:visited {
+color: #999;
+}
+span.slike a:hover {
+color: #999;
+}
+.categori{
+float:left;
+padding: 0px 10px 0px 20px;
+background: url(http://3.bp.blogspot.com/-pebUM217uG8/TxhyZ_x6C_I/AAAAAAAAA6U/6hw3ZsFYwBU/s000/tag.png) left center no-repeat;
+color: #999;
+}
+.categori a:link,.categori a:visited {
+color: #FFA812;
+}
+.categori a:hover {
+color: #999;
+}
+/*----------------------------------------------------
+{--------}  Sidebar  {--------}
+----------------------------------------------------*/
+#sidebar-wrapper {
+width: 270px;
+float: right;
+margin-right: 20px;
+margin-top: 20px;
+}
+#sidebar-wrapper .section {
+margin: 0;
+}
+.sidebar h2 {
+color: #fff;
+font-family: 'BebasNeueRegular', Arial,Tahoma,Century gothic,sans-serif;
+font-size: 18px;
+margin-bottom: 10px;
+padding: 10px 0px 10px 10px;
+background: #444444;
+border-left:10px solid #FFA812;
+}
+.sidebar .widget {
+width: 270px;
+list-style: none;
+color: #666;
+margin: 0px 0 30px 0px;
+}
+.sidebar .widget-content {
+padding: 10px;
+margin:0;
+}
+.sidebar ul {
+list-style-type: none;
+margin: 0 0 0 -10px ;
+padding: 0;
+}
+.sidebar li  {
+color: #777;
+text-decoration: none;
+padding: 0px 0px 0px 10px;
+display:block;
+list-style-type:none;
+line-height:22px;
+}
+.sidebar li a:link, .sidebar li a:visited {
+color: #777;
+text-decoration: none;
+}
+.sidebar li a:hover {
+color: #FFA812;
+}
+.sidebar img {
+margin: 0 10px 10px 0;
+border: 1px solid #fff;
+background: #eee;
+padding:5px;
+}
+.sidebar img:hover {
+background: #FFF9DF;
+}
+#BlogArchive1_ArchiveMenu {
+border:1px dotted #ddd;
+background:#efefef;
+color:#000;
+text-decoration: none;
+margin-top:5px;
+padding:10px;
+width:240px;
+}
+#Followers1-wrapper {
+background:#efefef none repeat scroll 0 0;
+border:1px dotted #ccc;
+color:#716349
+width:300px;
+}
+.profile-link {
+display:none;
+}
+.smallbanner {margin: 0px 0px 10px 0px;width:270px;
+}
+.smallbanner h2{
+color: #fff;
+font-family: 'BebasNeueRegular', Arial,Tahoma,Century gothic,sans-serif;
+font-size: 18px;
+margin-bottom: 10px;
+padding: 10px 0px 10px 10px;
+background: #444444;
+border-left:10px solid #FFA812;
+}
+.smallbanner ul{
+list-style-type: none;
+margin: 0px auto;
+padding: 0px 0px 0px 0px;
+overflow: hidden;
+}
+.smallbanner li{
+list-style-type: none;
+margin: 10px 10px 10px 0px;
+float: left;
+display: inline;
+}
+.smallbanner ul li.rbanner{
+margin-right:0px;
+}
+/*----------------------------------------------------
+{--------}  Comments  {--------}
+----------------------------------------------------*/
+#commentsbox {
+margin: 0px 0px 0px 0px;
+}
+h3#comments {
+padding: 10px 20px;
+font-family: 'BebasNeueRegular';
+font-size: 20px;
+background: #444444;
+margin: 20px 0px 20px 0px;
+color: #fff;
+}
+ol.commentlist {
+clear: both;
+overflow: hidden;
+list-style: none;
+margin: 0;
+}
+ol.commentlist li {
+line-height: 18px;
+background: #fff;
+margin: 0px 0 20px 0px;
+padding: 25px;
+border: 1px solid #e8e8e8;
+}
+ol.commentlist li .comment-author a:link,ol.commentlist li .comment-author a:visited {
+color: #333;
+font-weight: 700;
+text-decoration: none!important;
+}
+cite.fn {
+color: #eee;
+font-style: normal;
+}
+ol.commentlist li .comment-author .avatar {
+float: right;
+border: 1px solid #eee;
+background: #fff;
+padding: 3px;
+}
+ol.commentlist li .comment-meta .commentmetadata {
+color: #000;
+}
+ol.commentlist li .comment-meta a {
+color: #E88F02;
+text-decoration: none!important;
+}
+ol.commentlist li p {
+line-height: 22px;
+margin-top: 5px;
+color: #666;
+font-size: 12px;
+}
+ol.commentlist li .reply {
+margin-top: 10px;
+font-size: 10px;
+}
+ol.commentlist li .reply a {
+background: #FFA812;
+border: 1px solid #E88F02;
+color: #fff;
+text-decoration: none;
+padding: 3px 10px;
+}
+ol.commentlist li ul.children {
+list-style: none;
+text-indent: 0;
+margin: 1em 0 0;
+}
+.comment-nav {
+height: 20px;
+padding: 5px;
+}
+.comment-nav a:link,.comment-nav a:visited {
+color: #E88F02;
+}
+.avatar-image-container {
+float:right;
+background:#fff;
+border:1px solid #ccc;
+margin:0px 0px 10px 0px;
+padding:5px;
+height:32px;
+width:32px;
+}
+.avatar-image-container img {
+background:url(http://www.opendrive.com/files/6532718_pabxK/avatar.png) no-  repeat;
+height:32px;
+width:32px;
+}
+#respond {
+margin: 10px 0;
+padding: 0;
+}
+#respond h3 {
+font-size: 14px;
+font-weight: 400;
+color: #444;
+padding: 5px 0 0;
+}
+#commentform {
+padding: 10px 0;
+}
+#commentform a {
+color: #E1512A;
+}
+#commentform p {
+color: #999;
+margin: 5px 0;
+}
+#respond label {
+display: block;
+color: #999;
+padding: 5px 0;
+}
+#respond input {
+background: #fff;
+border: 1px solid #ddd;
+color: #02070F;
+margin: 0 10px 10px 0;
+padding: 5px;
+}
+#commentform input {
+width: 50%;
+}
+#respond input#commentSubmit {
+width: 100px;
+background: #545454;
+border: 1px solid #333;
+color: #fff;
+cursor: pointer;
+margin: 10px 0;
+padding: 3px 5px;
+}
+textarea#comment {
+background: #fff;
+border: 1px solid #ddd;
+width: 70%;
+color: #02070F;
+margin: 10px 0 0;
+padding: 5px;
+}
+ol.commentlist li .comment-author,ol.commentlist li .comment-author .fn {
+color: #333;
+}
+ol.commentlist li .comment-meta,#respond label small {
+font-size: 10px;
+}
+ol.commentlist li ul.children li.depth-2,ol.commentlist li ul.children li.depth-3,ol.commentlist li ul.children li.depth-4,ol.commentlist li ul.children li.depth-5 {
+margin: 0 0 0 50px;
+}
+/*----------------------------------------------------
+{--------}  Archive Title  {--------}
+----------------------------------------------------*/
+h1.pagetitle {
+font-size: 14px;
+margin-bottom: 20px;
+color: #777;
+}
+/*----------------------------------------------------
+{--------}  Footer Widgets  {--------}
+----------------------------------------------------*/
+#bottom {
+margin: 0px auto;
+width: 1000px;
+background:url(http://1.bp.blogspot.com/-bgYn0KujFQE/UTx8V0xfk6I/AAAAAAAADJc/gdkWW65k10g/s0/ystripe.png) top repeat-x;
+}
+.bottomcover {
+margin: 0px auto;
+background:url(http://2.bp.blogspot.com/-CIeXuNu0q5I/UTx8VgNjhLI/AAAAAAAADJg/UImaSZW7dDE/s0/submenu.png);
+}
+.botwid{
+float: left;
+width: 217px;
+padding-bottom: 30px;
+font-size: 11px;
+margin: 20px 10px 0px 20px;
+color: #ddd;
+list-style: none;
+}
+.botwid h2{
+font-size: 20px;
+padding: 10px 0px 10px 5px;
+color: #fff;
+font-family: 'BebasNeueRegular', Arial,Tahoma,Century gothic,sans-serif;
+font-weight: normal;
+}
+.botwid ul {
+list-style-type: none;
+margin :0;
+padding: 0px 5px 5px 0px ;
+}
+.botwid li{
+color: #ddd;
+list-style-type: none;
+margin: 0 ;
+padding: 0;
+list-style-type: none;
+padding: 7px 0px 7px 0px;
+border-bottom: 1px solid #555;
+display:block;
+}
+.botwid ul ul  {
+list-style-type: none;
+margin: 0;
+padding: 0px 0px 0px 0px;
+background-repeat:no-repeat;
+}
+.botwid ul li {
+height:100%;
+line-height:18px;
+clear: left;
+list-style-type: none;
+color: #ddd;
+float: none;
+}
+.botwid ul li a:link, .botwid ul li a:visited  {
+color: #ddd;
+text-decoration: none;
+padding: 5px 0px 5px 5px;
+}
+.botwid ul li a:hover{
+color: #fff;
+}
+/*----------------------------------------------------
+{--------}  Footer  {--------}
+----------------------------------------------------*/
+#footer {
+width: 1000px;
+padding: 20px 0px;
+margin: 0px 0px 0px 0px;
+color: #aaa;
+font-size: 11px;
+background:url(http://1.bp.blogspot.com/-0KLocYq3OBk/UTx8VV_oW7I/AAAAAAAADJo/Zadlj7cpVok/s0/footer.png);
+float: left;
+}
+#footer a:link , #footer a:visited {
+color: #aaa;
+}
+#footer a:hover {
+color: #aaa;
+}
+.fcred {
+text-align: center;
+margin: 0px auto;
+line-height: 16px;
+}
+/*----------------------------------------------------
+{--------}  Page navigation  {--------}
+----------------------------------------------------*/
+#navigation {
+padding:0px 0px 20px 0px;
+}
+.wp-pagenavi {
+font-size: 12px;
+text-align: center !important;
+}
+.wp-pagenavi a, .wp-pagenavi a:link, .wp-pagenavi a:visited {
+text-decoration: none;
+background: #666!important;
+border: 1px solid #333 !important;
+color: #fff !important;
+padding: 3px 7px !important;
+display: block;
+text-align: center;
+float: left;
+margin-right: 4px;
+}
+.wp-pagenavi a:hover {
+color: #ffffff;
+}
+/*----------------------------------------------------
+{--------}  Tooltips  {--------}
+----------------------------------------------------*/
+#tooltip {
+position: absolute;
+font-family: BebasNeueRegular;
+border: 1px solid #ddd;
+font-size: 18px;
+background: #fff;
+padding: 10px 20px;
+color: #666;
+display: none;
+border-radius: 5px;
+-moz-border-radius: 5px;
+-webkit-border-radius: 5px;
+-moz-box-shadow: 0 0 2px #ccc;
+-webkit-box-shadow: 0 0 2px #ccc;
+box-shadow: 0 0 2px #ccc;
+}
+/*----------------------------------------------------
+{--------}  Banner  {--------}
+----------------------------------------------------*/
+.topad{
+margin:35px 20px 0px 0px;
+float:right;
+background:#fff;
+border:1px solid #ddd;
+padding:3px;
+}
+/*----------------------------------------------------
+{--------}  Fonts  {--------}
+----------------------------------------------------*/
+@font-face {
+font-family: 'BebasNeueRegular';
+src: url('https://googledrive.com/host/0B5yGYUJ1tHx5MkZDcnBxeVp4ZFE/myst-theme/BebasNeue-webfont.eot');
+src: url('https://googledrive.com/host/0B5yGYUJ1tHx5MkZDcnBxeVp4ZFE/myst-theme/BebasNeue-webfont.eot?#iefix') format('embedded-opentype'),
+url('https://googledrive.com/host/0B5yGYUJ1tHx5MkZDcnBxeVp4ZFE/myst-theme/BebasNeue-webfont.woff') format('woff'),
+url('https://googledrive.com/host/0B5yGYUJ1tHx5MkZDcnBxeVp4ZFE/myst-theme/BebasNeue-webfont.ttf') format('truetype'),
+url('https://googledrive.com/host/0B5yGYUJ1tHx5MkZDcnBxeVp4ZFE/myst-theme/BebasNeue-webfont.svg#BebasNeueRegular') format('svg');
+font-weight: normal;
+font-style: normal;
+}
+.largeimage{height:250px;overflow:hidden;background:url(http://4.bp.blogspot.com/-BZXt_KJ3rz4/TuXpBoNuNDI/AAAAAAAAGj0/NSKPczh_vs8/s1600/image-not-found.jpg);}
+/*---------------------------------------------------------
+{--------}  Buy Sell Ads 125x125 {--------}
+---------------------------------------------------------*/
+#bsap_1248466 a{
+text-shadow:1px 1px 1px #111;
+color:#eee;
+padding:5px;
+margin:0 6px 6px 0px;
+-webkit-transition:all 0.2s ease;
+-moz-transition:all 0.2s ease;
+-o-transition:all 0.2s ease;
+-webkit-border-top-left-radius:20px;
+-webkit-border-bottom-right-radius:20px;
+-moz-border-radius-topleft:20px;
+-moz-border-radius-bottomright:20px;
+border-top-left-radius:20px;
+border-bottom-right-radius:20px;
+}
+#bsap_1248466 a:hover{
+-webkit-border-top-left-radius:10px;
+-webkit-border-bottom-right-radius:10px;
+-moz-border-radius-topleft:10px;
+-moz-border-radius-bottomright:10px;
+border-top-left-radius:10px;
+border-bottom-right-radius:10px;
+}
+#bsap_1248466 a img{
+-webkit-box-shadow:0 0 2px rgba(0,0,0,0.5);
+-moz-box-shadow:0 0 2px rgba(0,0,0,0.5);
+box-shadow:0 0 2px rgba(0,0,0,0.5);
+padding:3px;
+}
+#bsap_1248466 .even{
+margin-right:0;
+}
+#bsap_1248466 .ad1{}
+#bsap_1248466 .ad2{}
+#bsap_1248466 .ad3{}
+#bsap_1248466 .ad4{}
+#bsap_1248466 .ad5{display:none;}
+#bsap_1248466 .ad6{display:none;}
+#bsap_1248466 .ad7{display:none;}
+#bsap_1248466 .ad8{display:none;}
+#bsap_1248466 .ad9{display:none;}
+#bsap_1248466 .ad10{display:none;}
+#bsap_1248466 .ad11{display:none;}
+#bsap_1248466 .ad12{display:none;}
+.showpageArea {
+font-family:verdana,arial,helvetica;
+color: #fff;
+font-size:11px;
+margin:10px;
+padding:8px 20px;
+background: #333;
+}
+.showpageArea a {
+color: #fff;
+}
+.showpageNum a {
+padding: 3px 8px;
+margin:0 4px;
+text-decoration: none;
+background: #666;
+}
+.showpageNum a:hover {
+background: #888;
+}
+.showpagePoint {
+color:#fff;
+padding: 3px 8px;
+margin: 2px;
+font-weight: 700;
+background: #da6100;
+text-decoration: none;
+}
+.showpageOf{
+margin:0 8px 0 0;
+}
+strong {
+font-weight: bold;
+}
+pre {
+margin-bottom: 20px;
+}
+/* Pretty printing styles. Used with prettify.js. */
+/* SPAN elements with the classes below are added by prettyprint. */
+.pln { color: #000 }  /* plain text */
+@media screen {
+.str { color: #080 }  /* string content */
+.kwd { color: #008 }  /* a keyword */
+.com { color: #800 }  /* a comment */
+.typ { color: #606 }  /* a type name */
+.lit { color: #066 }  /* a literal value */
+/* punctuation, lisp open bracket, lisp close bracket */
+.pun, .opn, .clo { color: #660 }
+.tag { color: #008 }  /* a markup tag name */
+.atn { color: #606 }  /* a markup attribute name */
+.atv { color: #080 }  /* a markup attribute value */
+.dec, .var { color: #606 }  /* a declaration; a variable name */
+.fun { color: red }  /* a function name */
+}
+/* Use higher contrast and text-weight for printable form. */
+@media print, projection {
+.str { color: #060 }
+.kwd { color: #006; font-weight: bold }
+.com { color: #600; font-style: italic }
+.typ { color: #404; font-weight: bold }
+.lit { color: #044 }
+.pun, .opn, .clo { color: #440 }
+.tag { color: #006; font-weight: bold }
+.atn { color: #404 }
+.atv { color: #060 }
+}
+/* Put a border around prettyprinted code snippets. */
+/* pre.prettyprint { padding: 2px; border: 1px solid #888 } */
+/* Specify class=linenums on a pre to get line numbering */
+ol.linenums { margin-top: 0; margin-bottom: 0 } /* IE indents via margin-left */
+li.L0,
+li.L1,
+li.L2,
+li.L3,
+li.L5,
+li.L6,
+li.L7,
+li.L8 { list-style-type: none }
+/* Alternate shading for lines */
+li.L1,
+li.L3,
+li.L5,
+li.L7,
+li.L9 { background: #eee }
+.post .prettyprint {
+background-color: #fdfdfd;
+border: 1px solid #e8e8e8;
+tab-size: 4;
+overflow:auto;
+max-height: 300px;
+max-height: none\9;
+}
+.sociallink {
+width:32px;
+height:32px;
+float: right;
+margin-left: 3px;
+}
+.gplink {
+background:url(http://4.bp.blogspot.com/-aD2hcw3v1mc/UTypOrATXZI/AAAAAAAADLM/QLFrKNVvl9g/s25/googleplus.png) no-repeat center center #da4a38;
+}
+.gplink:hover {
+background:url(http://4.bp.blogspot.com/-aD2hcw3v1mc/UTypOrATXZI/AAAAAAAADLM/QLFrKNVvl9g/s38/googleplus.png) no-repeat center center #da4a38;
+}
+.fblink {
+background:url(http://4.bp.blogspot.com/-fHx-dRlpDK8/UTypOokrX0I/AAAAAAAADLU/mBZsmATeI0I/s25/facebook.png) no-repeat center center #1f69b3;
+}
+.fblink:hover {
+background:url(http://4.bp.blogspot.com/-fHx-dRlpDK8/UTypOokrX0I/AAAAAAAADLU/mBZsmATeI0I/s38/facebook.png) no-repeat center center #1f69b3;
+}
+.twlink {
+background:url(http://4.bp.blogspot.com/-TgoABpkxIls/UTypO9_YNJI/AAAAAAAADLY/pm3o4wES8fE/s36/twitter-bird-dark-bgs.png) no-repeat center center #43b3e5;
+}
+.twlink:hover {
+background:url(http://4.bp.blogspot.com/-TgoABpkxIls/UTypO9_YNJI/AAAAAAAADLY/pm3o4wES8fE/s54/twitter-bird-dark-bgs.png) no-repeat center center #43b3e5;
+}
+.inlink {
+background:url(http://4.bp.blogspot.com/-xTvS-GwciJA/UTypOnZpa4I/AAAAAAAADLI/wXuQXJ6gytg/s25/linkedin.png) no-repeat center center #0097bd;
+}
+.inlink:hover {
+background:url(http://4.bp.blogspot.com/-xTvS-GwciJA/UTypOnZpa4I/AAAAAAAADLI/wXuQXJ6gytg/s38/linkedin.png) no-repeat center center #0097bd;
+}
+.entry h1 {
+color: #222;
+margin: 80px 0 40px;
+}
+.entry h2 {
+color: #222;
+margin: 40px 0 20px;
+}
+.entry h3 {
+color: #222;
+margin: 30px 0 15px;
+}
+.PopularPosts .item-title {
+font-weight: bolder;
+font-size: 1.2em;
+}
+input.gsc-search-button {
+width: 60px;
+margin: 0;
+margin-left: 8px;
+border: 0;
+border-radius: 2px;
+-moz-border-radius: 2px;
+background: #000;
+background: rgba(0,0,0,.6);
+color: #fff;
+cursor: pointer;
+font-size: 13px;
+height: 26px;
+z-index: 0;
+}
+.sidebar input.gsc-input {
+width: 100%;
+height: 22px;
+font-size: 13px;
+border: 1px inset;
+padding:0;
+}
+.recommend-block dt {
+display: inline-block;
+margin: 0 10px;
+vertical-align: top;
+}
+.sidebar div.subscribe div.top span.inner {
+margin: 0 5px;
+}
+.sidebar div.subscribe img {
+margin: 0 5px;
+border: 0;
+background: transparent;
+padding: 0;
+}
+.profile-link-entry {
+float: right;
+margin: 10px 0 0 20px;
+font-weight: bold;
+}
+
+--></style>
+<script type="text/javascript" async="" src="./Run Jetty in the Maven life-cycle_files/ga.js.download"></script><script type="text/javascript" async="" src="./Run Jetty in the Maven life-cycle_files/plusone.js.download" gapi_processed="true"></script><script src="./Run Jetty in the Maven life-cycle_files/cb=gapi.loaded_2" async=""></script><script src="./Run Jetty in the Maven life-cycle_files/cb=gapi.loaded_1" async=""></script><script id="twitter-wjs" src="./Run Jetty in the Maven life-cycle_files/widgets.js.download"></script><script src="./Run Jetty in the Maven life-cycle_files/cb=gapi.loaded_0" async=""></script><script src="./Run Jetty in the Maven life-cycle_files/plusone.js(1).download" type="text/javascript" gapi_processed="true">
+{lang: 'en-US'}
+</script>
+<script type="text/javascript">
+summary_noimg = 500;
+summary_img = 500;
+img_thumb_height = 250;
+img_thumb_width = 670; 
+</script>
+<script type="text/javascript">
+//<![CDATA[
+
+function removeHtmlTag(strx,chop){ 
+	if(strx.indexOf("<")!=-1)
+	{
+		var s = strx.split("<"); 
+		for(var i=0;i<s.length;i++){ 
+			if(s[i].indexOf(">")!=-1){ 
+				s[i] = s[i].substring(s[i].indexOf(">")+1,s[i].length); 
+			} 
+		} 
+		strx =  s.join(""); 
+	}
+	chop = (chop < strx.length-1) ? chop : strx.length-2; 
+	while(strx.charAt(chop-1)!=' ' && strx.indexOf(' ',chop)!=-1) chop++; 
+	strx = strx.substring(0,chop-1); 
+	return strx+'...'; 
+}
+
+function createSummaryAndThumb(pID){
+	var div = document.getElementById(pID);
+	var imgtag = "";
+	var img = div.getElementsByTagName("img");
+	var summ = summary_noimg;
+	if(img.length>=1) {	
+		imgtag = '<span style="display:none;"><img src="'+img[0].src+'" width="'+img_thumb_width+'px" height="'+img_thumb_height+'px"/></span>';
+		summ = summary_img;
+	}
+	
+	var summary = imgtag + '<div>' + removeHtmlTag(div.innerHTML,summ) + '</div>';
+	div.innerHTML = summary;
+}
+
+//]]>
+</script>
+<script type="text/javascript">function a(){var b=window.location.href,c=b.split("?");switch(c.length){case 1:return b+"?m=1";case 2:return 0<=c[1].search("(^|&)m=")?null:b+"&m=1";default:return null}}var d=navigator.userAgent;if(-1!=d.indexOf("Mobile")&&-1!=d.indexOf("WebKit")&&-1==d.indexOf("iPad")||-1!=d.indexOf("Opera Mini")||-1!=d.indexOf("IEMobile")){var e=a();e&&window.location.replace(e)};
+</script><script src="./Run Jetty in the Maven life-cycle_files/secureAnonymousFramework"></script><style type="text/css">* html #li_ui_li_gen_1477576744431_0 a#li_ui_li_gen_1477576744431_0-link{height:1% !important;}#li_ui_li_gen_1477576744431_0{position:relative !important;overflow:visible !important;display:block !important;}#li_ui_li_gen_1477576744431_0 span{-webkit-box-sizing:content-box !important;-moz-box-sizing:content-box !important;box-sizing:content-box !important;}#li_ui_li_gen_1477576744431_0 a#li_ui_li_gen_1477576744431_0-link{border:0 !important;height:20px !important;text-decoration:none !important;padding:0 !important;margin:0 !important;display:inline-block !important;}#li_ui_li_gen_1477576744431_0 a#li_ui_li_gen_1477576744431_0-link:link, #li_ui_li_gen_1477576744431_0 a#li_ui_li_gen_1477576744431_0-link:visited, #li_ui_li_gen_1477576744431_0 a#li_ui_li_gen_1477576744431_0-link:hover, #li_ui_li_gen_1477576744431_0 a#li_ui_li_gen_1477576744431_0-link:active{border:0 !important;text-decoration:none !important;}#li_ui_li_gen_1477576744431_0 a#li_ui_li_gen_1477576744431_0-link:after{content:"." !important;display:block !important;clear:both !important;visibility:hidden !important;line-height:0 !important;height:0 !important;}#li_ui_li_gen_1477576744431_0 #li_ui_li_gen_1477576744431_0-logo{background-image:url(https://static.licdn.com/scds/common/u/images/apps/connect/sprites/sprite_connect_v14.png) !important;background-position:0px -593px !important;background-repeat:no-repeat !important;background-color:#0077b5 !important;background-size:initial !important;cursor:pointer !important;border:0 !important;border-right:1px solid #066094 !important;text-indent:-9999em !important;overflow:hidden !important;padding:0 !important;margin:0 !important;position:absolute !important;left:0px !important;top:0px !important;display:block !important;width:20px !important;height:20px !important;float:right !important;border-radius:2px !important;-webkit-border-radius:2px !important;border-top-right-radius:2px !important;border-bottom-right-radius:2px !important;-webkit-border-top-right-radius:2px !important;-webkit-border-bottom-right-radius:2px !important;}#li_ui_li_gen_1477576744431_0 #li_ui_li_gen_1477576744431_0-title{color:#fff !important;cursor:pointer !important;display:block !important;white-space:nowrap !important;float:left !important;margin-left:1px !important;vertical-align:top !important;overflow:hidden !important;text-align:center !important;height:18px !important;padding:0 4px 0 23px !important;border:1px solid #000 !important;border-top-color:#0077b5 !important;border-right-color:#0077b5 !important;border-bottom-color:#0077b5 !important;border-left-color:#0077b5 !important;text-shadow:0 -1px #005887 !important;line-height:20px !important;border-radius:2px !important;-webkit-border-radius:2px !important;border-top-right-radius:2px !important;border-bottom-right-radius:2px !important;-webkit-border-top-right-radius:2px !important;-webkit-border-bottom-right-radius:2px !important;background-color:#0077b5 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#0077b5), color-stop(100%,#0077b5)) !important; background-image: -webkit-linear-gradient(top, #0077b5 0%, #0077b5 100%) !important;}#li_ui_li_gen_1477576744431_0.hovered #li_ui_li_gen_1477576744431_0-title{border:1px solid #000 !important;border-top-color:#0369a0 !important;border-right-color:#0369a0 !important;border-bottom-color:#0369a0 !important;border-left-color:#0369a0 !important;background-color:#0369a0 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#0369a0), color-stop(100%,#0369a0)) !important; background-image: -webkit-linear-gradient(top, #0369a0 0%, #0369a0 100%) !important;}#li_ui_li_gen_1477576744431_0.clicked #li_ui_li_gen_1477576744431_0-title, #li_ui_li_gen_1477576744431_0.down #li_ui_li_gen_1477576744431_0-title{color:#fff !important;border:1px solid #000 !important;border-top-color:#066094 !important;border-right-color:#066094 !important;border-bottom-color:#066094 !important;border-left-color:#066094 !important;background-color:#066094 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#066094), color-stop(100%,#066094)) !important; background-image: -webkit-linear-gradient(top, #066094 0%, #066094 100%) !important;}.IN-shadowed #li_ui_li_gen_1477576744431_0 #li_ui_li_gen_1477576744431_0-title{}.IN-shadowed #li_ui_li_gen_1477576744431_0.hovered #li_ui_li_gen_1477576744431_0-title{}.IN-shadowed #li_ui_li_gen_1477576744431_0.clicked #li_ui_li_gen_1477576744431_0-title, .IN-shadowed #li_ui_li_gen_1477576744431_0.down #li_ui_li_gen_1477576744431_0-title{}#li_ui_li_gen_1477576744431_0 #li_ui_li_gen_1477576744431_0-title-text, #li_ui_li_gen_1477576744431_0 #li_ui_li_gen_1477576744431_0-title-text *{color:#fff !important;font-size:11px !important;font-family:Arial, sans-serif !important;font-weight:bold !important;font-style:normal !important;-webkit-font-smoothing:antialiased !important;display:inline-block !important;background:transparent none !important;vertical-align:top !important;height:18px !important;line-height:20px !important;float:none !important;}#li_ui_li_gen_1477576744431_0 #li_ui_li_gen_1477576744431_0-title-text strong{font-weight:bold !important;}#li_ui_li_gen_1477576744431_0 #li_ui_li_gen_1477576744431_0-title-text em{font-style:italic !important;}#li_ui_li_gen_1477576744431_0.hovered #li_ui_li_gen_1477576744431_0-title-text, #li_ui_li_gen_1477576744431_0.hovered #li_ui_li_gen_1477576744431_0-title-text *{color:#fff !important;}#li_ui_li_gen_1477576744431_0.clicked #li_ui_li_gen_1477576744431_0-title-text, #li_ui_li_gen_1477576744431_0.down #li_ui_li_gen_1477576744431_0-title-text, #li_ui_li_gen_1477576744431_0.clicked #li_ui_li_gen_1477576744431_0-title-text *, #li_ui_li_gen_1477576744431_0.down #li_ui_li_gen_1477576744431_0-title-text *{color:#fff !important;}#li_ui_li_gen_1477576744431_0 #li_ui_li_gen_1477576744431_0-title #li_ui_li_gen_1477576744431_0-mark{display:inline-block !important;width:0px !important;overflow:hidden !important;}.success #li_ui_li_gen_1477576744431_0 #li_ui_li_gen_1477576744431_0-title{color:#fff !important;border-top-color:#0077b5 !important;border-right-color:#0077b5 !important;border-bottom-color:#0077b5 !important;border-left-color:#0077b5 !important;background-color:#0077b5 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#0077b5), color-stop(100%,#0077b5)) !important; background-image: -webkit-linear-gradient(top, #0077b5 0%, #0077b5 100%) !important;}.success #li_ui_li_gen_1477576744431_0 #li_ui_li_gen_1477576744431_0-title-text, .success #li_ui_li_gen_1477576744431_0 #li_ui_li_gen_1477576744431_0-title-text *{color:#fff !important;}.IN-shadowed .success #li_ui_li_gen_1477576744431_0 #li_ui_li_gen_1477576744431_0-title{}.success #li_ui_li_gen_1477576744431_0.hovered #li_ui_li_gen_1477576744431_0-title{color:#fff !important;border-top-color:#0369a0 !important;border-right-color:#0369a0 !important;border-bottom-color:#0369a0 !important;border-left-color:#0369a0 !important;background-color:#0369a0 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#0369a0), color-stop(100%,#0369a0)) !important; background-image: -webkit-linear-gradient(top, #0369a0 0%, #0369a0 100%) !important;}.success #li_ui_li_gen_1477576744431_0.hovered #li_ui_li_gen_1477576744431_0-title-text, .success #li_ui_li_gen_1477576744431_0.hovered #li_ui_li_gen_1477576744431_0-title-text *{color:#fff !important;}.success #li_ui_li_gen_1477576744431_0.clicked #li_ui_li_gen_1477576744431_0-title, .success #li_ui_li_gen_1477576744431_0.down #li_ui_li_gen_1477576744431_0-title{color:#fff !important;border-top-color:#066094 !important;border-right-color:#066094 !important;border-bottom-color:#066094 !important;border-left-color:#066094 !important;background-color:#066094 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#066094), color-stop(100%,#066094)) !important; background-image: -webkit-linear-gradient(top, #066094 0%, #066094 100%) !important;}.success #li_ui_li_gen_1477576744431_0.clicked #li_ui_li_gen_1477576744431_0-title-text, .success #li_ui_li_gen_1477576744431_0.down #li_ui_li_gen_1477576744431_0-title-text, .success #li_ui_li_gen_1477576744431_0.clicked #li_ui_li_gen_1477576744431_0-title-text *, .success #li_ui_li_gen_1477576744431_0.down #li_ui_li_gen_1477576744431_0-title-text *{color:#fff !important;}.IN-shadowed .success #li_ui_li_gen_1477576744431_0.clicked #li_ui_li_gen_1477576744431_0-title, .IN-shadowed .success #li_ui_li_gen_1477576744431_0.down #li_ui_li_gen_1477576744431_0-title{}#li_ui_li_gen_1477576744442_1-container.IN-right {display:inline-block !important;float:left !important;overflow:visible !important;position:relative !important;height:20px !important;padding-left:2px !important;line-height:1px !important;cursor:pointer !important;}#li_ui_li_gen_1477576744442_1.IN-right {display:block !important;float:left !important;height:20px !important;margin-right:4px !important;padding-right:4px !important;background-image:url(https://static.licdn.com/scds/common/u/images/apps/connect/sprites/sprite_connect_v14.png) !important;background-color:transparent !important;background-repeat:no-repeat !important;background-position:right -447px !important;}#li_ui_li_gen_1477576744442_1-inner.IN-right {display:block !important;float:left !important;padding-left:8px !important;text-align:center !important;background-image:url(https://static.licdn.com/scds/common/u/images/apps/connect/sprites/sprite_connect_v14.png) !important;background-color:transparent !important;background-repeat:no-repeat !important;background-position:0px -426px !important;}#li_ui_li_gen_1477576744442_1-content.IN-right {display:inline !important;font-size:11px !important;color:#4e4e4e !important;font-weight:bold !important;font-family:Arial, sans-serif !important;line-height:20px !important;padding:0 5px 0 5px !important;}#li_ui_li_gen_1477576744442_1-container.IN-empty {display:none !important;}#li_ui_li_gen_1477576744442_1-container.IN-hidden #li_ui_li_gen_1477576744442_1 {display:none !important;}* html #li_ui_li_gen_1477576744444_2 a#li_ui_li_gen_1477576744444_2-link{height:1% !important;}#li_ui_li_gen_1477576744444_2{position:relative !important;overflow:visible !important;display:block !important;}#li_ui_li_gen_1477576744444_2 span{-webkit-box-sizing:content-box !important;-moz-box-sizing:content-box !important;box-sizing:content-box !important;}#li_ui_li_gen_1477576744444_2 a#li_ui_li_gen_1477576744444_2-link{border:0 !important;height:20px !important;text-decoration:none !important;padding:0 !important;margin:0 !important;display:inline-block !important;}#li_ui_li_gen_1477576744444_2 a#li_ui_li_gen_1477576744444_2-link:link, #li_ui_li_gen_1477576744444_2 a#li_ui_li_gen_1477576744444_2-link:visited, #li_ui_li_gen_1477576744444_2 a#li_ui_li_gen_1477576744444_2-link:hover, #li_ui_li_gen_1477576744444_2 a#li_ui_li_gen_1477576744444_2-link:active{border:0 !important;text-decoration:none !important;}#li_ui_li_gen_1477576744444_2 a#li_ui_li_gen_1477576744444_2-link:after{content:"." !important;display:block !important;clear:both !important;visibility:hidden !important;line-height:0 !important;height:0 !important;}#li_ui_li_gen_1477576744444_2 #li_ui_li_gen_1477576744444_2-logo{background-image:url(https://static.licdn.com/scds/common/u/images/apps/connect/sprites/sprite_connect_v14.png) !important;background-position:0px -593px !important;background-repeat:no-repeat !important;background-color:#0077b5 !important;background-size:initial !important;cursor:pointer !important;border:0 !important;border-right:1px solid #066094 !important;text-indent:-9999em !important;overflow:hidden !important;padding:0 !important;margin:0 !important;position:absolute !important;left:0px !important;top:0px !important;display:block !important;width:20px !important;height:20px !important;float:right !important;border-radius:2px !important;-webkit-border-radius:2px !important;border-top-right-radius:2px !important;border-bottom-right-radius:2px !important;-webkit-border-top-right-radius:2px !important;-webkit-border-bottom-right-radius:2px !important;}#li_ui_li_gen_1477576744444_2 #li_ui_li_gen_1477576744444_2-title{color:#fff !important;cursor:pointer !important;display:block !important;white-space:nowrap !important;float:left !important;margin-left:1px !important;vertical-align:top !important;overflow:hidden !important;text-align:center !important;height:18px !important;padding:0 4px 0 23px !important;border:1px solid #000 !important;border-top-color:#0077b5 !important;border-right-color:#0077b5 !important;border-bottom-color:#0077b5 !important;border-left-color:#0077b5 !important;text-shadow:0 -1px #005887 !important;line-height:20px !important;border-radius:2px !important;-webkit-border-radius:2px !important;border-top-right-radius:2px !important;border-bottom-right-radius:2px !important;-webkit-border-top-right-radius:2px !important;-webkit-border-bottom-right-radius:2px !important;background-color:#0077b5 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#0077b5), color-stop(100%,#0077b5)) !important; background-image: -webkit-linear-gradient(top, #0077b5 0%, #0077b5 100%) !important;}#li_ui_li_gen_1477576744444_2.hovered #li_ui_li_gen_1477576744444_2-title{border:1px solid #000 !important;border-top-color:#0369a0 !important;border-right-color:#0369a0 !important;border-bottom-color:#0369a0 !important;border-left-color:#0369a0 !important;background-color:#0369a0 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#0369a0), color-stop(100%,#0369a0)) !important; background-image: -webkit-linear-gradient(top, #0369a0 0%, #0369a0 100%) !important;}#li_ui_li_gen_1477576744444_2.clicked #li_ui_li_gen_1477576744444_2-title, #li_ui_li_gen_1477576744444_2.down #li_ui_li_gen_1477576744444_2-title{color:#fff !important;border:1px solid #000 !important;border-top-color:#066094 !important;border-right-color:#066094 !important;border-bottom-color:#066094 !important;border-left-color:#066094 !important;background-color:#066094 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#066094), color-stop(100%,#066094)) !important; background-image: -webkit-linear-gradient(top, #066094 0%, #066094 100%) !important;}.IN-shadowed #li_ui_li_gen_1477576744444_2 #li_ui_li_gen_1477576744444_2-title{}.IN-shadowed #li_ui_li_gen_1477576744444_2.hovered #li_ui_li_gen_1477576744444_2-title{}.IN-shadowed #li_ui_li_gen_1477576744444_2.clicked #li_ui_li_gen_1477576744444_2-title, .IN-shadowed #li_ui_li_gen_1477576744444_2.down #li_ui_li_gen_1477576744444_2-title{}#li_ui_li_gen_1477576744444_2 #li_ui_li_gen_1477576744444_2-title-text, #li_ui_li_gen_1477576744444_2 #li_ui_li_gen_1477576744444_2-title-text *{color:#fff !important;font-size:11px !important;font-family:Arial, sans-serif !important;font-weight:bold !important;font-style:normal !important;-webkit-font-smoothing:antialiased !important;display:inline-block !important;background:transparent none !important;vertical-align:top !important;height:18px !important;line-height:20px !important;float:none !important;}#li_ui_li_gen_1477576744444_2 #li_ui_li_gen_1477576744444_2-title-text strong{font-weight:bold !important;}#li_ui_li_gen_1477576744444_2 #li_ui_li_gen_1477576744444_2-title-text em{font-style:italic !important;}#li_ui_li_gen_1477576744444_2.hovered #li_ui_li_gen_1477576744444_2-title-text, #li_ui_li_gen_1477576744444_2.hovered #li_ui_li_gen_1477576744444_2-title-text *{color:#fff !important;}#li_ui_li_gen_1477576744444_2.clicked #li_ui_li_gen_1477576744444_2-title-text, #li_ui_li_gen_1477576744444_2.down #li_ui_li_gen_1477576744444_2-title-text, #li_ui_li_gen_1477576744444_2.clicked #li_ui_li_gen_1477576744444_2-title-text *, #li_ui_li_gen_1477576744444_2.down #li_ui_li_gen_1477576744444_2-title-text *{color:#fff !important;}#li_ui_li_gen_1477576744444_2 #li_ui_li_gen_1477576744444_2-title #li_ui_li_gen_1477576744444_2-mark{display:inline-block !important;width:0px !important;overflow:hidden !important;}.success #li_ui_li_gen_1477576744444_2 #li_ui_li_gen_1477576744444_2-title{color:#fff !important;border-top-color:#0077b5 !important;border-right-color:#0077b5 !important;border-bottom-color:#0077b5 !important;border-left-color:#0077b5 !important;background-color:#0077b5 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#0077b5), color-stop(100%,#0077b5)) !important; background-image: -webkit-linear-gradient(top, #0077b5 0%, #0077b5 100%) !important;}.success #li_ui_li_gen_1477576744444_2 #li_ui_li_gen_1477576744444_2-title-text, .success #li_ui_li_gen_1477576744444_2 #li_ui_li_gen_1477576744444_2-title-text *{color:#fff !important;}.IN-shadowed .success #li_ui_li_gen_1477576744444_2 #li_ui_li_gen_1477576744444_2-title{}.success #li_ui_li_gen_1477576744444_2.hovered #li_ui_li_gen_1477576744444_2-title{color:#fff !important;border-top-color:#0369a0 !important;border-right-color:#0369a0 !important;border-bottom-color:#0369a0 !important;border-left-color:#0369a0 !important;background-color:#0369a0 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#0369a0), color-stop(100%,#0369a0)) !important; background-image: -webkit-linear-gradient(top, #0369a0 0%, #0369a0 100%) !important;}.success #li_ui_li_gen_1477576744444_2.hovered #li_ui_li_gen_1477576744444_2-title-text, .success #li_ui_li_gen_1477576744444_2.hovered #li_ui_li_gen_1477576744444_2-title-text *{color:#fff !important;}.success #li_ui_li_gen_1477576744444_2.clicked #li_ui_li_gen_1477576744444_2-title, .success #li_ui_li_gen_1477576744444_2.down #li_ui_li_gen_1477576744444_2-title{color:#fff !important;border-top-color:#066094 !important;border-right-color:#066094 !important;border-bottom-color:#066094 !important;border-left-color:#066094 !important;background-color:#066094 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#066094), color-stop(100%,#066094)) !important; background-image: -webkit-linear-gradient(top, #066094 0%, #066094 100%) !important;}.success #li_ui_li_gen_1477576744444_2.clicked #li_ui_li_gen_1477576744444_2-title-text, .success #li_ui_li_gen_1477576744444_2.down #li_ui_li_gen_1477576744444_2-title-text, .success #li_ui_li_gen_1477576744444_2.clicked #li_ui_li_gen_1477576744444_2-title-text *, .success #li_ui_li_gen_1477576744444_2.down #li_ui_li_gen_1477576744444_2-title-text *{color:#fff !important;}.IN-shadowed .success #li_ui_li_gen_1477576744444_2.clicked #li_ui_li_gen_1477576744444_2-title, .IN-shadowed .success #li_ui_li_gen_1477576744444_2.down #li_ui_li_gen_1477576744444_2-title{}#li_ui_li_gen_1477576744446_3-container.IN-top {display:inline-block !important;overflow:visible !important;position:relative !important;height:42px !important;line-height:1px !important;cursor:pointer !important;}#li_ui_li_gen_1477576744446_3.IN-top {display:inline-block !important;height:42px !important;width:60px !important;text-align:center !important;background-image:url(https://static.licdn.com/scds/common/u/images/apps/connect/sprites/sprite_connect_v14.png) !important;background-color:transparent !important;background-repeat:no-repeat !important;background-position:-207px -470px !important;}#li_ui_li_gen_1477576744446_3-content.IN-top {display:inline !important;font-size:16px !important;color:#4e4e4e !important;font-weight:bold !important;font-family:Arial, sans-serif !important;line-height:38px !important;}#li_ui_li_gen_1477576744446_3-container.IN-empty #li_ui_li_gen_1477576744446_3-inner.IN-top {background-image:url(https://static.licdn.com/scds/common/u/images/apps/connect/sprites/sprite_connect_v14.png) !important;background-color:transparent !important;background-repeat:no-repeat !important;background-position:0px -560px !important;background-size:initial !important;overflow:hidden !important;margin:4px auto 0 auto !important;width:28px !important;height:28px !important;display:block !important;}#li_ui_li_gen_1477576744446_3-container.IN-empty #li_ui_li_gen_1477576744446_3-content.IN-top {text-indent:-999px !important;display:inline-block !important;}#li_ui_li_gen_1477576744446_3-container.IN-hidden #li_ui_li_gen_1477576744446_3 {display:none !important;}* html #li_ui_li_gen_1477576745119_4 a#li_ui_li_gen_1477576745119_4-link{height:1% !important;}#li_ui_li_gen_1477576745119_4{position:relative !important;overflow:visible !important;display:block !important;}#li_ui_li_gen_1477576745119_4 span{-webkit-box-sizing:content-box !important;-moz-box-sizing:content-box !important;box-sizing:content-box !important;}#li_ui_li_gen_1477576745119_4 a#li_ui_li_gen_1477576745119_4-link{border:0 !important;height:20px !important;text-decoration:none !important;padding:0 !important;margin:0 !important;display:inline-block !important;}#li_ui_li_gen_1477576745119_4 a#li_ui_li_gen_1477576745119_4-link:link, #li_ui_li_gen_1477576745119_4 a#li_ui_li_gen_1477576745119_4-link:visited, #li_ui_li_gen_1477576745119_4 a#li_ui_li_gen_1477576745119_4-link:hover, #li_ui_li_gen_1477576745119_4 a#li_ui_li_gen_1477576745119_4-link:active{border:0 !important;text-decoration:none !important;}#li_ui_li_gen_1477576745119_4 a#li_ui_li_gen_1477576745119_4-link:after{content:"." !important;display:block !important;clear:both !important;visibility:hidden !important;line-height:0 !important;height:0 !important;}#li_ui_li_gen_1477576745119_4 #li_ui_li_gen_1477576745119_4-logo{background-image:url(https://static.licdn.com/scds/common/u/images/apps/connect/sprites/sprite_connect_v14.png) !important;background-position:0px -593px !important;background-repeat:no-repeat !important;background-color:#0077b5 !important;background-size:initial !important;cursor:pointer !important;border:0 !important;border-right:1px solid #066094 !important;text-indent:-9999em !important;overflow:hidden !important;padding:0 !important;margin:0 !important;position:absolute !important;left:0px !important;top:0px !important;display:block !important;width:20px !important;height:20px !important;float:right !important;border-radius:2px !important;-webkit-border-radius:2px !important;border-top-right-radius:2px !important;border-bottom-right-radius:2px !important;-webkit-border-top-right-radius:2px !important;-webkit-border-bottom-right-radius:2px !important;}#li_ui_li_gen_1477576745119_4 #li_ui_li_gen_1477576745119_4-title{color:#fff !important;cursor:pointer !important;display:block !important;white-space:nowrap !important;float:left !important;margin-left:1px !important;vertical-align:top !important;overflow:hidden !important;text-align:center !important;height:18px !important;padding:0 4px 0 23px !important;border:1px solid #000 !important;border-top-color:#0077b5 !important;border-right-color:#0077b5 !important;border-bottom-color:#0077b5 !important;border-left-color:#0077b5 !important;text-shadow:0 -1px #005887 !important;line-height:20px !important;border-radius:2px !important;-webkit-border-radius:2px !important;border-top-right-radius:2px !important;border-bottom-right-radius:2px !important;-webkit-border-top-right-radius:2px !important;-webkit-border-bottom-right-radius:2px !important;background-color:#0077b5 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#0077b5), color-stop(100%,#0077b5)) !important; background-image: -webkit-linear-gradient(top, #0077b5 0%, #0077b5 100%) !important;}#li_ui_li_gen_1477576745119_4.hovered #li_ui_li_gen_1477576745119_4-title{border:1px solid #000 !important;border-top-color:#0369a0 !important;border-right-color:#0369a0 !important;border-bottom-color:#0369a0 !important;border-left-color:#0369a0 !important;background-color:#0369a0 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#0369a0), color-stop(100%,#0369a0)) !important; background-image: -webkit-linear-gradient(top, #0369a0 0%, #0369a0 100%) !important;}#li_ui_li_gen_1477576745119_4.clicked #li_ui_li_gen_1477576745119_4-title, #li_ui_li_gen_1477576745119_4.down #li_ui_li_gen_1477576745119_4-title{color:#fff !important;border:1px solid #000 !important;border-top-color:#066094 !important;border-right-color:#066094 !important;border-bottom-color:#066094 !important;border-left-color:#066094 !important;background-color:#066094 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#066094), color-stop(100%,#066094)) !important; background-image: -webkit-linear-gradient(top, #066094 0%, #066094 100%) !important;}.IN-shadowed #li_ui_li_gen_1477576745119_4 #li_ui_li_gen_1477576745119_4-title{}.IN-shadowed #li_ui_li_gen_1477576745119_4.hovered #li_ui_li_gen_1477576745119_4-title{}.IN-shadowed #li_ui_li_gen_1477576745119_4.clicked #li_ui_li_gen_1477576745119_4-title, .IN-shadowed #li_ui_li_gen_1477576745119_4.down #li_ui_li_gen_1477576745119_4-title{}#li_ui_li_gen_1477576745119_4 #li_ui_li_gen_1477576745119_4-title-text, #li_ui_li_gen_1477576745119_4 #li_ui_li_gen_1477576745119_4-title-text *{color:#fff !important;font-size:11px !important;font-family:Arial, sans-serif !important;font-weight:bold !important;font-style:normal !important;-webkit-font-smoothing:antialiased !important;display:inline-block !important;background:transparent none !important;vertical-align:top !important;height:18px !important;line-height:20px !important;float:none !important;}#li_ui_li_gen_1477576745119_4 #li_ui_li_gen_1477576745119_4-title-text strong{font-weight:bold !important;}#li_ui_li_gen_1477576745119_4 #li_ui_li_gen_1477576745119_4-title-text em{font-style:italic !important;}#li_ui_li_gen_1477576745119_4.hovered #li_ui_li_gen_1477576745119_4-title-text, #li_ui_li_gen_1477576745119_4.hovered #li_ui_li_gen_1477576745119_4-title-text *{color:#fff !important;}#li_ui_li_gen_1477576745119_4.clicked #li_ui_li_gen_1477576745119_4-title-text, #li_ui_li_gen_1477576745119_4.down #li_ui_li_gen_1477576745119_4-title-text, #li_ui_li_gen_1477576745119_4.clicked #li_ui_li_gen_1477576745119_4-title-text *, #li_ui_li_gen_1477576745119_4.down #li_ui_li_gen_1477576745119_4-title-text *{color:#fff !important;}#li_ui_li_gen_1477576745119_4 #li_ui_li_gen_1477576745119_4-title #li_ui_li_gen_1477576745119_4-mark{display:inline-block !important;width:0px !important;overflow:hidden !important;}.success #li_ui_li_gen_1477576745119_4 #li_ui_li_gen_1477576745119_4-title{color:#fff !important;border-top-color:#0077b5 !important;border-right-color:#0077b5 !important;border-bottom-color:#0077b5 !important;border-left-color:#0077b5 !important;background-color:#0077b5 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#0077b5), color-stop(100%,#0077b5)) !important; background-image: -webkit-linear-gradient(top, #0077b5 0%, #0077b5 100%) !important;}.success #li_ui_li_gen_1477576745119_4 #li_ui_li_gen_1477576745119_4-title-text, .success #li_ui_li_gen_1477576745119_4 #li_ui_li_gen_1477576745119_4-title-text *{color:#fff !important;}.IN-shadowed .success #li_ui_li_gen_1477576745119_4 #li_ui_li_gen_1477576745119_4-title{}.success #li_ui_li_gen_1477576745119_4.hovered #li_ui_li_gen_1477576745119_4-title{color:#fff !important;border-top-color:#0369a0 !important;border-right-color:#0369a0 !important;border-bottom-color:#0369a0 !important;border-left-color:#0369a0 !important;background-color:#0369a0 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#0369a0), color-stop(100%,#0369a0)) !important; background-image: -webkit-linear-gradient(top, #0369a0 0%, #0369a0 100%) !important;}.success #li_ui_li_gen_1477576745119_4.hovered #li_ui_li_gen_1477576745119_4-title-text, .success #li_ui_li_gen_1477576745119_4.hovered #li_ui_li_gen_1477576745119_4-title-text *{color:#fff !important;}.success #li_ui_li_gen_1477576745119_4.clicked #li_ui_li_gen_1477576745119_4-title, .success #li_ui_li_gen_1477576745119_4.down #li_ui_li_gen_1477576745119_4-title{color:#fff !important;border-top-color:#066094 !important;border-right-color:#066094 !important;border-bottom-color:#066094 !important;border-left-color:#066094 !important;background-color:#066094 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#066094), color-stop(100%,#066094)) !important; background-image: -webkit-linear-gradient(top, #066094 0%, #066094 100%) !important;}.success #li_ui_li_gen_1477576745119_4.clicked #li_ui_li_gen_1477576745119_4-title-text, .success #li_ui_li_gen_1477576745119_4.down #li_ui_li_gen_1477576745119_4-title-text, .success #li_ui_li_gen_1477576745119_4.clicked #li_ui_li_gen_1477576745119_4-title-text *, .success #li_ui_li_gen_1477576745119_4.down #li_ui_li_gen_1477576745119_4-title-text *{color:#fff !important;}.IN-shadowed .success #li_ui_li_gen_1477576745119_4.clicked #li_ui_li_gen_1477576745119_4-title, .IN-shadowed .success #li_ui_li_gen_1477576745119_4.down #li_ui_li_gen_1477576745119_4-title{}#li_ui_li_gen_1477576745121_5-container.IN-top {display:inline-block !important;overflow:visible !important;position:relative !important;height:42px !important;line-height:1px !important;cursor:pointer !important;}#li_ui_li_gen_1477576745121_5.IN-top {display:inline-block !important;height:42px !important;width:60px !important;text-align:center !important;background-image:url(https://static.licdn.com/scds/common/u/images/apps/connect/sprites/sprite_connect_v14.png) !important;background-color:transparent !important;background-repeat:no-repeat !important;background-position:-207px -470px !important;}#li_ui_li_gen_1477576745121_5-content.IN-top {display:inline !important;font-size:16px !important;color:#4e4e4e !important;font-weight:bold !important;font-family:Arial, sans-serif !important;line-height:38px !important;}#li_ui_li_gen_1477576745121_5-container.IN-empty #li_ui_li_gen_1477576745121_5-inner.IN-top {background-image:url(https://static.licdn.com/scds/common/u/images/apps/connect/sprites/sprite_connect_v14.png) !important;background-color:transparent !important;background-repeat:no-repeat !important;background-position:0px -560px !important;background-size:initial !important;overflow:hidden !important;margin:4px auto 0 auto !important;width:28px !important;height:28px !important;display:block !important;}#li_ui_li_gen_1477576745121_5-container.IN-empty #li_ui_li_gen_1477576745121_5-content.IN-top {text-indent:-999px !important;display:inline-block !important;}#li_ui_li_gen_1477576745121_5-container.IN-hidden #li_ui_li_gen_1477576745121_5 {display:none !important;}</style><script type="text/javascript" src="./Run Jetty in the Maven life-cycle_files/google_top_exp.js.download"></script><style>.gc-bubbleDefault{background-color:transparent !important;text-align:left;padding:0 !important;margin:0 !important;border:0 !important;table-layout:auto !important}.gc-reset{background-color:transparent !important;border:0 !important;padding:0 !important;margin:0 !important;text-align:left}.pls-bubbleTop{border-bottom:1px solid #ccc !important}.pls-topTail,.pls-vertShimLeft,.pls-contentLeft{background-image:url(//ssl.gstatic.com/s2/oz/images/stars/po/bubblev1/border_3.gif) !important}.pls-topTail{background-repeat:repeat-x !important;background-position:bottom !important}.pls-vertShim{background-color:#fff !important;text-align:right}.tbl-grey .pls-vertShim{background-color:#f5f5f5 !important}.pls-vertShimLeft{background-repeat:repeat-y !important;background-position:right !important;height:4px}.pls-vertShimRight{height:4px}.pls-confirm-container .pls-vertShim{background-color:#fff3c2 !important}.pls-contentWrap{background-color:#fff !important;position:relative !important;vertical-align:top}.pls-contentLeft{background-repeat:repeat-y;background-position:right;vertical-align:top}.pls-dropRight{background-image:url(//ssl.gstatic.com/s2/oz/images/stars/po/bubblev1/bubbleDropR_3.png) !important;background-repeat:repeat-y !important;vertical-align:top}.pls-vert,.pls-tailleft,.pls-dropTR .pls-dropBR,.pls-dropBL,.pls-vert img{vertical-align:top}.pls-dropBottom{background-image:url(//ssl.gstatic.com/s2/oz/images/stars/po/bubblev1/bubbleDropB_3.png) !important;background-repeat:repeat-x !important;width:100%;vertical-align:top}.pls-topLeft{background:inherit !important;text-align:right;vertical-align:bottom}.pls-topRight{background:inherit !important;text-align:left;vertical-align:bottom}.pls-bottomLeft{background:inherit !important;text-align:right}.pls-bottomRight{background:inherit !important;text-align:left;vertical-align:top}.pls-tailtop,.pls-tailright,.pls-tailbottom,.pls-tailleft{display:none;position:relative}.pls-tailbottom,.pls-tailtop,.pls-tailright,.pls-tailleft,.pls-dropTR,.pls-dropBR,.pls-dropBL{background-image:url(//ssl.gstatic.com/s2/oz/images/stars/po/bubblev1/bubbleSprite_3.png) !important;background-repeat:no-repeat}.tbl-grey .pls-tailbottom,.tbl-grey .pls-tailtop,.tbl-grey .pls-tailright,.tbl-grey .pls-tailleft,.tbl-grey .pls-dropTR,.tbl-grey .pls-dropBR,.tbl-grey .pls-dropBL{background-image:url(//ssl.gstatic.com/s2/oz/images/stars/po/bubblev1/bubbleSprite-grey.png) !important}.pls-tailbottom{background-position:-23px 0}.pls-confirm-container .pls-tailbottom{background-position:-23px -10px}.pls-tailtop{background-position:-19px -20px}.pls-tailright{background-position:0 0}.pls-tailleft{background-position:-10px 0}.pls-tailtop{vertical-align:top}.gc-bubbleDefault td{line-height:0;font-size:0}.pls-topLeft img,.pls-topRight img,.pls-tailbottom{vertical-align:bottom}.pls-bottomLeft img,.bubbleDropTR,.pls-dropBottomL img,.pls-dropBottom img,.pls-dropBottomR img,.pls-bottomLeft{vertical-align:top}.pls-dropTR{background-position:0 -22px}.pls-dropBR{background-position:0 -27px}.pls-dropBL{background-position:0 -16px}.pls-spacertop,.pls-spacerright,.pls-spacerbottom,.pls-spacerleft{position:static !important}.pls-spinner{bottom:0;position:absolute;left:0;margin:auto;right:0;top:0} </style><script type="text/javascript" charset="utf-8" async="" src="./Run Jetty in the Maven life-cycle_files/button.4e56ff84e57afaf5af2506ef73ab8a88.js.download"></script></head>
+<body>
+<div id="wrapper">
+<!-- wrapper begin -->
+<div id="masthead"><!-- masthead begin -->
+<div id="top">
+<div id="blogname">
+<div class="header section" id="header"><div class="widget Header" data-version="1" id="Header1">
+<div id="header-inner">
+<div class="titlewrapper">
+<h1 class="title">
+</h1><h1><a href="http://www.benoitschweblin.com/">Benoit Schweblin 's/blo//g'</a></h1>
+
+</div>
+<h3>Java EE, Maven, HTML5... tutorials and more</h3>
+</div>
+</div></div>
+</div>
+</div>
+<div id="botmenu">
+<div class="menu-primary-container" id="submenu">
+<ul class="sfmenu" id="menu-primary"><li class="menu-item menu-item-type-custom menu-item-object-custom" id="menu-item">
+<a href="http://www.benoitschweblin.com/">
+<strong>Home</strong>
+<span class="menudescription">Homepage</span></a>
+</li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page" id="menu-item"><a href="http://www.benoitschweblin.com/2013/03/run-jetty-in-maven-life-cycle.html#Link">
+<strong>About</strong>
+<span class="menudescription">About me</span>
+</a>
+<ul class="sub-menu">
+<li class="menu-item menu-item-type-post_type menu-item-object-page" id="menu-item"><a href="http://www.benoitschweblin.com/p/who-am-i.html">Who am I?</a>
+</li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page" id="menu-item"><a href="https://stackedit.io/viewer#!url=https://googledrive.com/host/0B5yGYUJ1tHx5MkZDcnBxeVp4ZFE/resume.md" target="_blank">My résumé</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div><!--end masthead-->
+<div id="casing">
+<div id="content">
+<div class="main section" id="main"><div class="widget Blog" data-version="1" id="Blog1">
+<div class="blog-posts hfeed">
+
+<div class="date-outer">
+
+<div class="date-posts">
+<div class="post-outer">
+<div class="post" id="post">
+<div class="title">
+<h2>
+Run Jetty in the Maven life-cycle
+</h2>
+</div>
+<div class="entry">
+<p></p><p><img src="./Run Jetty in the Maven life-cycle_files/jetty_logo.png" alt="Jetty" title=""></p>
+
+<p>In the Java EE kingdom, JBoss Application Server is king. But sometimes it's nice to have a lighter container to run during our development phases. Here are some typical use cases:</p>
+
+<ul>
+<li>quickly redeploy our fresh code or dependencies injections during development,</li>
+<li>run web-based automated tests during the Maven life-cycle, in continuous integration basically.</li>
+</ul>
+
+<p>Jetty is a good choice for these specific needs as it comes with multiple features:</p>
+
+<ol>
+<li>It can be started and stopped in any Maven life-cycle phases using a rich Maven plugin.</li>
+<li>It can run in the same Java process as Maven. No need to install any 3rd party software or run any external commands. This feature may be helpful in a continuous integration environment.</li>
+<li>It can run either a war package or scattered resources from multiple locations. The 2nd option is quiet useful during development, specially when dealing with war overlays.</li>
+<li>It can detect code changes, dependencies updates or any file modifications and then redeploy our application automatically.</li>
+<li>And, of course, it allows to debug code within Eclipse.</li>
+</ol>
+
+<p>In this tutorial, I will show you how to set up a basic configuration of the Jetty Maven plugin, how to customize it for a developer use and how to use it for both server and client integration tests.</p>
+
+<h1>First configuration of the Jetty Maven plugin</h1>
+
+<p>First thing, we need to declare the Jetty Maven plugin in our <code>pom.xml</code> file.</p>
+
+<blockquote>
+  <p><strong>NOTE:</strong> you can look for a more recent or specific version of the <code>jetty-maven-plugin</code> in the <a href="http://search.maven.org/">Maven Central Repository</a>. The plugin version is pretty much the version of the embedded Jetty server. There are actually 3 branches:</p>
+  
+  <ul>
+  <li>version 9 (groupId: org.eclipse.jetty) is the latest version but it requires Java 7.</li>
+  <li>version 8 (groupId: org.mortbay.jetty) is the one we are going to use in this tutorial.</li>
+  <li>version 6 (groupId: org.mortbay.jetty, artifactId: maven-jetty-plugin) is outdated.</li>
+  </ul>
+</blockquote>
+
+<pre class="prettyprint prettyprinted" style=""><code><span class="tag">&lt;project&gt;</span><span class="pln">
+ ...
+ </span><span class="tag">&lt;artifactId&gt;</span><span class="pln">my-artifact-id</span><span class="tag">&lt;/artifactId&gt;</span><span class="pln">
+ </span><span class="tag">&lt;packaging&gt;</span><span class="pln">war</span><span class="tag">&lt;/packaging&gt;</span><span class="pln">
+ ...
+ </span><span class="tag">&lt;build&gt;</span><span class="pln">
+  </span><span class="tag">&lt;plugins&gt;</span><span class="pln">
+   </span><span class="tag">&lt;plugin&gt;</span><span class="pln">
+    </span><span class="tag">&lt;groupId&gt;</span><span class="pln">org.mortbay.jetty</span><span class="tag">&lt;/groupId&gt;</span><span class="pln">
+    </span><span class="tag">&lt;artifactId&gt;</span><span class="pln">jetty-maven-plugin</span><span class="tag">&lt;/artifactId&gt;</span><span class="pln">
+    </span><span class="tag">&lt;version&gt;</span><span class="pln">8.1.9.v20130131</span><span class="tag">&lt;/version&gt;</span><span class="pln">
+    </span><span class="tag">&lt;configuration&gt;</span><span class="pln">
+     </span><span class="tag">&lt;stopKey&gt;</span><span class="pln">STOP</span><span class="tag">&lt;/stopKey&gt;</span><span class="pln">
+     </span><span class="tag">&lt;stopPort&gt;</span><span class="pln">9999</span><span class="tag">&lt;/stopPort&gt;</span><span class="pln">
+     </span><span class="tag">&lt;scanIntervalSeconds&gt;</span><span class="pln">5</span><span class="tag">&lt;/scanIntervalSeconds&gt;</span><span class="pln">
+    </span><span class="tag">&lt;/configuration&gt;</span><span class="pln">
+   </span><span class="tag">&lt;/plugin&gt;</span><span class="pln">
+  </span><span class="tag">&lt;/plugins&gt;</span><span class="pln">
+ </span><span class="tag">&lt;/build&gt;</span><span class="pln">
+</span><span class="tag">&lt;/project&gt;</span></code></pre>
+
+<p>This is a very basic configuration:</p>
+
+<ul>
+<li><code>stopKey</code> and <code>stopPort</code> will be used to stop a running instance of Jetty using the goal jetty:stop.</li>
+<li><code>scanIntervalSeconds</code> is the period between each file scan for automatic redeployment. By default, this is disabled (value <code>0</code>).</li>
+</ul>
+
+<p>Let's start our web application in "scattered" mode using the goal <code>jetty:run</code>:</p>
+
+<pre><code>mvn jetty:run
+</code></pre>
+
+<p>We can run it in "packaged" mode as well using the goal <code>jetty:run-war</code>:</p>
+
+<pre><code>mvn jetty:run-war
+</code></pre>
+
+<p>In both cases, our web application will be accessible from the following URL:</p>
+
+<pre><code>http://localhost:8080/
+</code></pre>
+
+<h2>Change the URL</h2>
+
+<p>For now, our application is served from the root location (<code>/</code>) of our web server. For many reasons, you may want to have the application accessible from <code>/my-artifact-id/</code>, for instance, in order to have the same conditions as your production environment. To do this, we need to add the following lines in the plugin configuration block:</p>
+
+<pre class="prettyprint prettyprinted" style=""><code><span class="pln">    </span><span class="tag">&lt;configuration&gt;</span><span class="pln">
+     ...
+     </span><span class="tag">&lt;webAppConfig&gt;</span><span class="pln">
+      </span><span class="tag">&lt;contextPath&gt;</span><span class="pln">/${project.artifactId}</span><span class="tag">&lt;/contextPath&gt;</span><span class="pln">
+     </span><span class="tag">&lt;/webAppConfig&gt;</span><span class="pln">
+    </span><span class="tag">&lt;/configuration&gt;</span></code></pre>
+
+<p>Once restarted, our web application will be accessible from the following URL:</p>
+
+<pre><code>http://localhost:8080/my-artifact-id/
+</code></pre>
+
+<h2>Change the port</h2>
+
+<p><code>8080</code> is the default port for most application servers, but you will probably need to change it if you already have a running server on your machine or if you want to run multiple Jetty's instances in parallel. To do this, we just change the system property <code>jetty.port</code> on the command line:</p>
+
+<pre><code>mvn -Djetty.port=8181 jetty:run
+</code></pre>
+
+<p>Our web application will now be accessible from the following URL:</p>
+
+<pre><code>http://localhost:8181/my-artifact-id/
+</code></pre>
+
+<p>We could also have specified this in the project properties section of our <code>pom.xml</code> or, a bit trickier, have configured a specific Jetty connector, like that:</p>
+
+<pre class="prettyprint prettyprinted" style=""><code><span class="pln">    </span><span class="tag">&lt;configuration&gt;</span><span class="pln">
+     ...
+     </span><span class="tag">&lt;connectors&gt;</span><span class="pln">
+      </span><span class="tag">&lt;connector</span><span class="pln"> </span><span class="atn">implementation</span><span class="pun">=</span><span class="atv">"org.eclipse.jetty.server.nio.SelectChannelConnector"</span><span class="tag">&gt;</span><span class="pln">
+       </span><span class="tag">&lt;port&gt;</span><span class="pln">8181</span><span class="tag">&lt;/port&gt;</span><span class="pln">
+      </span><span class="tag">&lt;/connector&gt;</span><span class="pln">
+     </span><span class="tag">&lt;/connectors&gt;</span><span class="pln">
+    </span><span class="tag">&lt;/configuration&gt;</span></code></pre>
+
+<h2>Speed up the deployment</h2>
+
+<p>At this time, you are probably experiencing performance issues during deployment. If your web application hangs at start-up during more than a minute with a high CPU usage, you are surely dealing with the Servlet API 2.5 looking for annotations everywhere.</p>
+
+<p>A workaround is to limit annotation search only to a few jars using a context configuration file.</p>
+
+<p>Let's create a file named <code>jetty-context.xml</code> in the directory <code>src/test/resources</code> (so it won't be included in our web application) with the following content:</p>
+
+<pre class="prettyprint prettyprinted" style=""><code><span class="pun">&lt;?</span><span class="pln">xml version</span><span class="pun">=</span><span class="str">"1.0"</span><span class="pln"> encoding</span><span class="pun">=</span><span class="str">"UTF-8"</span><span class="pun">?&gt;</span><span class="pln">
+</span><span class="tag">&lt;Configure</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"org.eclipse.jetty.webapp.WebAppContext"</span><span class="tag">&gt;</span><span class="pln">
+ </span><span class="tag">&lt;Call</span><span class="pln"> </span><span class="atn">name</span><span class="pun">=</span><span class="atv">"setAttribute"</span><span class="tag">&gt;</span><span class="pln">
+  </span><span class="tag">&lt;Arg&gt;</span><span class="pln">org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern</span><span class="tag">&lt;/Arg&gt;</span><span class="pln">
+  </span><span class="tag">&lt;Arg&gt;</span><span class="pln">^$</span><span class="tag">&lt;/Arg&gt;</span><span class="pln">
+ </span><span class="tag">&lt;/Call&gt;</span><span class="pln">
+</span><span class="tag">&lt;/Configure&gt;</span></code></pre>
+
+<p>Here we put an empty string as regular expression so we don't want the Servlet API to look for any annotations in any jar dependencies. But you can specify a more complex expression if needed.</p>
+
+<p>Then, in our <code>pom.xml</code> file, we will add the following line in the plugin configuration block:</p>
+
+<pre class="prettyprint prettyprinted" style=""><code><span class="pln">    </span><span class="tag">&lt;configuration&gt;</span><span class="pln">
+     ...
+     </span><span class="tag">&lt;contextXml&gt;</span><span class="pln">${project.build.testOutputDirectory}/jetty-context.xml</span><span class="tag">&lt;/contextXml&gt;</span><span class="pln">
+    </span><span class="tag">&lt;/configuration&gt;</span></code></pre>
+
+<h1>jetty:run for development</h1>
+
+<p>The goal <code>jetty:run</code> suits well to a developer use. It allows:</p>
+
+<ul>
+<li>Running our project without requiring that it is packaged. That's what I'm calling "scattered" mode because every component of the project is used from its origin location.</li>
+<li>Modifying static resources (HTML, JavaScripts, Cascading Style Sheets...) and even dynamic resources that are translated at run-time (JSP, JSF...) without having to redeploy the application.</li>
+<li>Redeploying automatically our web application when classes or resources change using the periodic file scan mechanism.</li>
+</ul>
+
+<h2>Serve multiple web resource directories</h2>
+
+<p>When running in "scattered" mode, resources can be located in many different directories because they are not yet packaged. Here are some typical scenarios:</p>
+
+<ul>
+<li>Resources contained in war dependencies. Jetty handles war overlays even when using the goal <code>jetty:run</code>, but static resources can also be served from their origin directory to facilitate hot modifications.</li>
+<li>Some test pages that are not located in the directory <code>src/main/webapp</code> because we don't want them in the assembled war file.</li>
+<li>A Java applet that has to be retrieved from the repository using the <code>maven-dependency-plugin</code>.</li>
+</ul>
+
+<p>By default when using the goal <code>jetty:run</code>, Jetty will serve web resources contained in the directory <code>src/main/webapp</code>. However, Jetty allows to have extra resource directories that can be served in addition to the default one. We will achieve this by adding a <code>resourceBases</code> block in the <code>webAppConfig</code> block:</p>
+
+<pre class="prettyprint prettyprinted" style=""><code><span class="pln">     </span><span class="tag">&lt;webAppConfig&gt;</span><span class="pln">
+      ...
+      </span><span class="tag">&lt;resourceBases&gt;</span><span class="pln">
+       </span><span class="tag">&lt;resourceBase&gt;</span><span class="pln">${project.basedir}/src/main/webapp</span><span class="tag">&lt;/resourceBase&gt;</span><span class="pln">
+       </span><span class="tag">&lt;resourceBase&gt;</span><span class="pln">${project.basedir}/../other-project/src/main/webapp</span><span class="tag">&lt;/resourceBase&gt;</span><span class="pln">
+       </span><span class="tag">&lt;resourceBase&gt;</span><span class="pln">${project.basedir}/src/test/webapp</span><span class="tag">&lt;/resourceBase&gt;</span><span class="pln">
+       </span><span class="tag">&lt;resourceBase&gt;</span><span class="pln">${project.build.directory}/java-applets</span><span class="tag">&lt;/resourceBase&gt;</span><span class="pln">
+      </span><span class="tag">&lt;/resourceBases&gt;</span><span class="pln">
+     </span><span class="tag">&lt;/webAppConfig&gt;</span></code></pre>
+
+<h2>Custom web.xml</h2>
+
+<p>With Jetty, we can specify a different deployment descriptor from the default <code>web.xml</code> that is located in the directory <code>src/main/webapp/WEB-INF</code>. This way we can add or replace configuration (servlets, filters...) for development or test purposes.</p>
+
+<p>One possibility is to write a completely different <code>web.xml</code> file that will replace the default one. This is possible by specifying a <code>descriptor</code> in the <code>webAppConfig</code> block:</p>
+
+<pre class="prettyprint prettyprinted" style=""><code><span class="pln">     </span><span class="tag">&lt;webAppConfig&gt;</span><span class="pln">
+      ...
+      </span><span class="tag">&lt;descriptor&gt;</span><span class="pln">${project.basedir}/src/test/webapp/WEB-INF/devel-web.xml</span><span class="tag">&lt;/descriptor&gt;</span><span class="pln">
+     </span><span class="tag">&lt;/webAppConfig&gt;</span></code></pre>
+
+<p>A more convenient possibility is to override our <code>web.xml</code> by another file that contain only the additional or replacement configuration:</p>
+
+<pre class="prettyprint prettyprinted" style=""><code><span class="pln">     </span><span class="tag">&lt;webAppConfig&gt;</span><span class="pln">
+      ...
+      </span><span class="tag">&lt;overrideDescriptor&gt;</span><span class="pln">${project.basedir}/src/test/webapp/WEB-INF/override-web.xml</span><span class="tag">&lt;/overrideDescriptor&gt;</span><span class="pln">
+     </span><span class="tag">&lt;/webAppConfig&gt;</span></code></pre>
+
+<p>In order to have full control of what servlets and filters need to be present or not, the most powerful solution would be to use XML entities. For instance, we could have:</p>
+
+<ul>
+<li>a first entity containing declarations of all the shared servlets and filters required by both <code>web.xml</code> and <code>devel-web.xml</code>,</li>
+<li>a second entity containing only declarations of the servlets and filters required by <code>web.xml</code>,</li>
+<li>a third entity containing only declarations of the servlets and filters required by <code>devel-web.xml</code>.</li>
+</ul>
+
+<p>In the default <code>web.xml</code>, we would have something like that:</p>
+
+<pre class="prettyprint prettyprinted" style=""><code><span class="pun">&lt;?</span><span class="pln">xml version</span><span class="pun">=</span><span class="str">"1.0"</span><span class="pln"> encoding</span><span class="pun">=</span><span class="str">"UTF-8"</span><span class="pun">?&gt;</span><span class="pln">
+</span><span class="dec">&lt;!DOCTYPE document [
+&lt;!ENTITY webEntity1 SYSTEM 'webEntity1.xml'&gt;</span><span class="pln">
+</span><span class="dec">&lt;!ENTITY webEntity2 SYSTEM 'webEntity2.xml'&gt;</span><span class="pln">
+]&gt;
+</span><span class="tag">&lt;web-app&gt;</span><span class="pln">
+ &amp;webEntity1;
+ &amp;webEntity2;
+</span><span class="tag">&lt;/web-app&gt;</span></code></pre>
+
+<p>And the <code>devel-web.xml</code> would look like:</p>
+
+<pre class="prettyprint prettyprinted" style=""><code><span class="pun">&lt;?</span><span class="pln">xml version</span><span class="pun">=</span><span class="str">"1.0"</span><span class="pln"> encoding</span><span class="pun">=</span><span class="str">"UTF-8"</span><span class="pun">?&gt;</span><span class="pln">
+</span><span class="dec">&lt;!DOCTYPE document [
+&lt;!ENTITY webEntity1 SYSTEM '../../../main/webapp/WEB-INF/webEntity1.xml'&gt;</span><span class="pln">
+</span><span class="dec">&lt;!ENTITY webEntity3 SYSTEM 'webEntity3.xml'&gt;</span><span class="pln">
+]&gt;
+</span><span class="tag">&lt;web-app&gt;</span><span class="pln">
+ &amp;webEntity1;
+ &amp;webEntity3;
+</span><span class="tag">&lt;/web-app&gt;</span></code></pre>
+
+<h2>Extend the classpath</h2>
+
+<p>The Jetty Maven plugin sets up by default a duly classpath for our Java web application including our Maven dependencies, the classes and resources compiled from directories <code>src/main/java</code> and <code>src/main/resources</code> and the sub-directories <code>WEB-INF/lib</code> and <code>WEB-INF/classes</code> of our web resource directories if any (see above). But we are not bounded to that. There could be multiple reasons for extending the default Jetty's classpath, like using test classes or some custom dependencies injections in our developer environment for instance.</p>
+
+<p>First, in order to set up a development or a test environment, we may want to include the classes and resources compiled from <code>src/test/java</code> and <code>src/test/resources</code>. There is actually a configuration flag named <code>useTestScope</code> for this:</p>
+
+<pre class="prettyprint prettyprinted" style=""><code><span class="pln">    </span><span class="tag">&lt;configuration&gt;</span><span class="pln">
+     ...
+     </span><span class="tag">&lt;useTestScope&gt;</span><span class="pln">true</span><span class="tag">&lt;/useTestScope&gt;</span><span class="pln">
+    </span><span class="tag">&lt;/configuration&gt;</span></code></pre>
+
+<p>This will also include the Maven dependencies of scope <code>test</code> in the classpath. To include scope <code>provided</code> as well, just use the flag <code>useProvidedScope</code>. To add others specific Maven dependencies or to override the project dependencies, we can also add a <code>dependencies</code> block in the Jetty's <code>plugin</code> block:</p>
+
+<pre class="prettyprint prettyprinted" style=""><code><span class="pln">   </span><span class="tag">&lt;plugin&gt;</span><span class="pln">
+    ...
+    </span><span class="tag">&lt;dependencies&gt;</span><span class="pln">
+     </span><span class="tag">&lt;dependency&gt;</span><span class="pln">
+      ...
+     </span><span class="tag">&lt;/dependency&gt;</span><span class="pln">
+    </span><span class="tag">&lt;/dependencies&gt;</span><span class="pln">
+   </span><span class="tag">&lt;/plugin&gt;</span></code></pre>
+
+<p>Second, we may also want to add some specific directories or dependencies. To do so, we will add our extra classpath entries to the <code>webAppConfig</code> block of our plugin configuration:</p>
+
+<pre class="prettyprint prettyprinted" style=""><code><span class="pln">     </span><span class="tag">&lt;webAppConfig&gt;</span><span class="pln">
+      ...
+      </span><span class="tag">&lt;extraClasspath&gt;</span><span class="pln">${project.build.directory}/custom-classes;${project.build.directory}/custom-dependency.jar</span><span class="tag">&lt;/extraClasspath&gt;</span><span class="pln">
+     </span><span class="tag">&lt;/webAppConfig&gt;</span></code></pre>
+
+<p>Will also be included all <code>WEB-INF/lib</code> and <code>WEB-INF/classes</code> sub-directories from our web resource directories that we configured previously. We can consider it as a third option of adding files in the classpath.</p>
+
+<h2>Extra scan locations</h2>
+
+<p>One of the biggest advantages of the Jetty Maven plugin is the periodic scan mechanism that can detect file modifications and redeploy the web application automatically. This feature, that we enabled earlier, is preconfigured to scan the project class and resource directories, as well as the Maven dependencies.</p>
+
+<p>Because of the complex layout of our project, we probably will have to add some extra scan directories to the mechanism. One way is to add a <code>scanTargets</code> block in our plugin configuration:</p>
+
+<pre class="prettyprint prettyprinted" style=""><code><span class="pln">    </span><span class="tag">&lt;configuration&gt;</span><span class="pln">
+     ...
+     </span><span class="tag">&lt;scanTargets&gt;</span><span class="pln">
+      </span><span class="tag">&lt;scanTarget&gt;</span><span class="pln">${project.basedir}/src/main/webapp/WEB-INF/classes</span><span class="tag">&lt;/scanTarget&gt;</span><span class="pln">
+      </span><span class="tag">&lt;scanTarget&gt;</span><span class="pln">${project.basedir}/src/test/webapp/WEB-INF/classes</span><span class="tag">&lt;/scanTarget&gt;</span><span class="pln">
+     </span><span class="tag">&lt;/scanTargets&gt;</span><span class="pln">
+    </span><span class="tag">&lt;/configuration&gt;</span></code></pre>
+
+<p>For even more complexity, there is an other way which allows to specify patterns:</p>
+
+<pre class="prettyprint prettyprinted" style=""><code><span class="pln">    </span><span class="tag">&lt;configuration&gt;</span><span class="pln">
+     ...
+     </span><span class="tag">&lt;scanTargetPatterns&gt;</span><span class="pln">
+      </span><span class="tag">&lt;scanTargetPattern&gt;</span><span class="pln">
+       </span><span class="tag">&lt;directory&gt;</span><span class="pln">${project.basedir}/..</span><span class="tag">&lt;/directory&gt;</span><span class="pln">
+       </span><span class="tag">&lt;includes&gt;</span><span class="pln">
+        </span><span class="tag">&lt;include&gt;</span><span class="pln">other-project1/target/*.jar</span><span class="tag">&lt;/include&gt;</span><span class="pln">
+        </span><span class="tag">&lt;include&gt;</span><span class="pln">other-project2/src/**/*.xml</span><span class="tag">&lt;/include&gt;</span><span class="pln">
+       </span><span class="tag">&lt;/includes&gt;</span><span class="pln">
+      </span><span class="tag">&lt;/scanTargetPattern&gt;</span><span class="pln">
+     </span><span class="tag">&lt;/scanTargetPatterns&gt;</span><span class="pln">
+    </span><span class="tag">&lt;/configuration&gt;</span></code></pre>
+
+<h1>jetty:run-war for tests</h1>
+
+<p>The goal <code>jetty:run-war</code> is definitely not suitable for development since it's bound to the Maven phase <code>package</code> and requires an assembled war. However it's appropriate for people who want to deploy a freshly built war package and perform some automated tests in the Maven life-cycle. Combined with the <code>maven-failsafe-plugin</code> it's a powerful solution for web oriented integration tests.</p>
+
+<p>Here is the execution blocks we need to add in the <code>jetty-maven-plugin</code> section of our <code>pom.xml</code>:</p>
+
+<pre class="prettyprint prettyprinted" style=""><code><span class="pln">   </span><span class="tag">&lt;plugin&gt;</span><span class="pln">
+    ...
+    </span><span class="tag">&lt;executions&gt;</span><span class="pln">
+     </span><span class="tag">&lt;execution&gt;</span><span class="pln">
+      </span><span class="tag">&lt;id&gt;</span><span class="pln">start-jetty</span><span class="tag">&lt;/id&gt;</span><span class="pln">
+      </span><span class="tag">&lt;phase&gt;</span><span class="pln">pre-integration-test</span><span class="tag">&lt;/phase&gt;</span><span class="pln">
+      </span><span class="tag">&lt;goals&gt;</span><span class="pln">
+       </span><span class="tag">&lt;goal&gt;</span><span class="pln">stop</span><span class="tag">&lt;/goal&gt;</span><span class="pln">
+       </span><span class="tag">&lt;goal&gt;</span><span class="pln">run-war</span><span class="tag">&lt;/goal&gt;</span><span class="pln">
+      </span><span class="tag">&lt;/goals&gt;</span><span class="pln">
+      </span><span class="tag">&lt;configuration&gt;</span><span class="pln">
+       </span><span class="tag">&lt;scanIntervalSeconds&gt;</span><span class="pln">0</span><span class="tag">&lt;/scanIntervalSeconds&gt;</span><span class="pln">
+       </span><span class="tag">&lt;daemon&gt;</span><span class="pln">true</span><span class="tag">&lt;/daemon&gt;</span><span class="pln">
+      </span><span class="tag">&lt;/configuration&gt;</span><span class="pln">
+     </span><span class="tag">&lt;/execution&gt;</span><span class="pln">
+     </span><span class="tag">&lt;execution&gt;</span><span class="pln">
+      </span><span class="tag">&lt;id&gt;</span><span class="pln">stop-jetty</span><span class="tag">&lt;/id&gt;</span><span class="pln">
+      </span><span class="tag">&lt;phase&gt;</span><span class="pln">post-integration-test</span><span class="tag">&lt;/phase&gt;</span><span class="pln">
+      </span><span class="tag">&lt;goals&gt;</span><span class="pln">
+       </span><span class="tag">&lt;goal&gt;</span><span class="pln">stop</span><span class="tag">&lt;/goal&gt;</span><span class="pln">
+      </span><span class="tag">&lt;/goals&gt;</span><span class="pln">
+     </span><span class="tag">&lt;/execution&gt;</span><span class="pln">
+    </span><span class="tag">&lt;/executions&gt;</span><span class="pln">
+   </span><span class="tag">&lt;/plugin&gt;</span></code></pre>
+
+<p>First execution block, which is bound to the <code>pre-integration-test</code> phase, is used to start the Jetty server before the integration tests. The goal <code>jetty:stop</code> is invoked to stop any previous instance of the server (using <code>stopKey</code> and <code>stopPort</code> values) in case it's still running. The run-war goal is invoked to start the server and to deploy the packaged war file. <code>&lt;scanIntervalSeconds&gt;</code> set to 0 disables hot deployment scanning. <code>&lt;daemon&gt;</code> set to true tells the server to continue running after the end of the goal.</p>
+
+<p>Second execution block, which is bound to the <code>post-integration-test</code> phase, is used to stop the Jetty server after the integration tests using the goal <code>jetty:stop</code>.</p>
+
+<h1>jetty:deploy-war for client tests</h1>
+
+<p>Another interesting goal, <code>jetty:deploy-war</code> can deploy any war file without having to assemble it. This can be useful in a web client project with automated integration tests. We can easily imagine a scenario where the war package of the server project is retrieved by the client project using the <code>maven-dependency-plugin</code> and automatically deployed to run some client tests.</p>
+
+<p>Here is a configuration sample for our client project:</p>
+
+<pre class="prettyprint prettyprinted" style=""><code><span class="pln">   </span><span class="tag">&lt;plugin&gt;</span><span class="pln">
+    ...
+    </span><span class="tag">&lt;configuration&gt;</span><span class="pln">
+     ...
+     </span><span class="tag">&lt;war&gt;</span><span class="pln">${project.build.directory}/copied-from-server-project.war</span><span class="tag">&lt;/war&gt;</span><span class="pln">
+    </span><span class="tag">&lt;/configuration&gt;</span><span class="pln">
+    </span><span class="tag">&lt;executions&gt;</span><span class="pln">
+     </span><span class="tag">&lt;execution&gt;</span><span class="pln">
+      </span><span class="tag">&lt;id&gt;</span><span class="pln">start-jetty</span><span class="tag">&lt;/id&gt;</span><span class="pln">
+      </span><span class="tag">&lt;phase&gt;</span><span class="pln">pre-integration-test</span><span class="tag">&lt;/phase&gt;</span><span class="pln">
+      </span><span class="tag">&lt;goals&gt;</span><span class="pln">
+       </span><span class="tag">&lt;goal&gt;</span><span class="pln">stop</span><span class="tag">&lt;/goal&gt;</span><span class="pln">
+       </span><span class="tag">&lt;goal&gt;</span><span class="pln">deploy-war</span><span class="tag">&lt;/goal&gt;</span><span class="pln">
+      </span><span class="tag">&lt;/goals&gt;</span><span class="pln">
+      </span><span class="tag">&lt;configuration&gt;</span><span class="pln">
+       </span><span class="tag">&lt;scanIntervalSeconds&gt;</span><span class="pln">0</span><span class="tag">&lt;/scanIntervalSeconds&gt;</span><span class="pln">
+       </span><span class="tag">&lt;daemon&gt;</span><span class="pln">true</span><span class="tag">&lt;/daemon&gt;</span><span class="pln">
+      </span><span class="tag">&lt;/configuration&gt;</span><span class="pln">
+     </span><span class="tag">&lt;/execution&gt;</span><span class="pln">
+     </span><span class="tag">&lt;execution&gt;</span><span class="pln">
+      </span><span class="tag">&lt;id&gt;</span><span class="pln">stop-jetty</span><span class="tag">&lt;/id&gt;</span><span class="pln">
+      </span><span class="tag">&lt;phase&gt;</span><span class="pln">post-integration-test</span><span class="tag">&lt;/phase&gt;</span><span class="pln">
+      </span><span class="tag">&lt;goals&gt;</span><span class="pln">
+       </span><span class="tag">&lt;goal&gt;</span><span class="pln">stop</span><span class="tag">&lt;/goal&gt;</span><span class="pln">
+      </span><span class="tag">&lt;/goals&gt;</span><span class="pln">
+     </span><span class="tag">&lt;/execution&gt;</span><span class="pln">
+    </span><span class="tag">&lt;/executions&gt;</span><span class="pln">
+   </span><span class="tag">&lt;/plugin&gt;</span></code></pre>
+
+<h1>Conclusion</h1>
+
+<p>These configuration examples are actually a small illustration of the Jetty Maven plugin potential. Jetty can also be configured with external XML files which extend widely the possibilities. You will find more information about Jetty and the Jetty Maven plugin on the <a href="http://www.eclipse.org/jetty/">Jetty's website</a>.</p>
+
+<p>However, there are still a few bad points regarding the use of Jetty and its plugin:</p>
+
+<ul>
+<li>The documentation is fragmented. Version 6 documentation is hosted at jetty.codehaus.org. Newer versions are hosted by eclipse.org but version 7 and 8 are at wiki.eclipse.org and version 9 is at www.eclipse.org/jetty. The 3 branches aren't fully documented and each branch's documentation may contain relevant information.</li>
+<li>The automated redeployment mechanism implemented by the plugin is a bit old-fashioned compared to class reloading solutions provided by JRebel or DCEVM. There is no doubt that these technologies will be part of Java in the future.</li>
+</ul><p></p>
+<div class="clear"></div>
+</div>
+<div class="clear"></div>
+<div class="social-widget"><table border="0">
+<tbody><tr>
+<td>
+<iframe id="twitter-widget-0" scrolling="no" frameborder="0" allowtransparency="true" class="twitter-share-button twitter-share-button-rendered twitter-tweet-button" title="Twitter Tweet Button" src="./Run Jetty in the Maven life-cycle_files/tweet_button.39f7ee9fffbd122b7a37a520dbdaebc6.en.html" style="position: static; visibility: visible; width: 60px; height: 20px;"></iframe>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</td>
+<td>
+<div id="___plusone_0" style="text-indent: 0px; margin: 0px; padding: 0px; background: transparent; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: baseline; display: inline-block; width: 90px; height: 20px;"><iframe frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 90px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 20px;" tabindex="0" vspace="0" width="100%" id="I0_1477576743742" name="I0_1477576743742" src="./Run Jetty in the Maven life-cycle_files/fastbutton.html" data-gapiattached="true" title="+1"></iframe></div>
+</td>
+<td>
+<script src="./Run Jetty in the Maven life-cycle_files/in.js.download" type="text/javascript"></script>
+<span class="IN-widget" style="line-height: 1; vertical-align: baseline; display: inline-block; text-align: center;"><span style="padding: 0px !important; margin: 0px !important; text-indent: 0px !important; display: inline-block !important; vertical-align: baseline !important; font-size: 1px !important;"><span id="li_ui_li_gen_1477576744431_0"><a id="li_ui_li_gen_1477576744431_0-link" href="javascript:void(0);"><span id="li_ui_li_gen_1477576744431_0-logo">in</span><span id="li_ui_li_gen_1477576744431_0-title"><span id="li_ui_li_gen_1477576744431_0-mark"></span><span id="li_ui_li_gen_1477576744431_0-title-text">Share</span></span></a></span></span><span style="padding: 0px !important; margin: 0px !important; text-indent: 0px !important; display: inline-block !important; vertical-align: baseline !important; font-size: 1px !important;"><span id="li_ui_li_gen_1477576744442_1-container" class="IN-right IN-hidden"><span id="li_ui_li_gen_1477576744442_1" class="IN-right"><span id="li_ui_li_gen_1477576744442_1-inner" class="IN-right"><span id="li_ui_li_gen_1477576744442_1-content" class="IN-right">0</span></span></span></span></span></span><script data-counter="right" type="IN/Share+init"></script>
+</td>
+</tr>
+</tbody></table></div>
+<div class="clear"></div>
+<div class="titlemeta clearfix">
+<span class="categori">
+<a href="http://www.benoitschweblin.com/search/label/Jetty" rel="tag">Jetty</a>,
+<a href="http://www.benoitschweblin.com/search/label/Maven" rel="tag">Maven</a>
+</span>
+</div>
+</div>
+<div class="clear"></div>
+<div class="clear"></div>
+<div id="commentsbox">
+<a name="comments"></a>
+<h3 id="comments">
+4 Responses so far.
+</h3>
+<ol class="commentlist">
+<li class="comment even">
+<div class="comment-body">
+<div class="comment-author vcard">
+<a name="c4191074923781404200"></a>
+<div class="avatar-image-container vcard"><span dir="ltr"><a href="https://www.blogger.com/profile/03946628980071151643" rel="nofollow" onclick="" class="avatar-hovercard" id="av-4191074923781404200-03946628980071151643"><img src="./Run Jetty in the Maven life-cycle_files/ShawnCharacter-purple-200x290.jpg" width="35" height="35" alt="" class="delayLoad" longdesc="//2.bp.blogspot.com/-UnOvVCbIMRs/Tqr4aMFFKzI/AAAAAAAABlo/Be8BWNJL9lg/s35/ShawnCharacter-purple-200x290.jpg" title="Shawn Becker">
+
+<noscript>&lt;img src="//2.bp.blogspot.com/-UnOvVCbIMRs/Tqr4aMFFKzI/AAAAAAAABlo/Be8BWNJL9lg/s35/ShawnCharacter-purple-200x290.jpg" width="35" height="35" class="photo" alt=""&gt;</noscript></a></span></div>
+<cite class="fn">
+<a href="https://www.blogger.com/profile/03946628980071151643" rel="nofollow">Shawn Becker</a>
+</cite>
+<span class="says">says:</span>
+</div>
+<div class="comment-meta commentmetadata">
+<a href="http://www.benoitschweblin.com/2013/03/run-jetty-in-maven-life-cycle.html?showComment=1365001461198#c4191074923781404200" title="comment permalink">
+3 April 2013 at 08:04
+</a>
+<span class="item-control blog-admin pid-1292683264">
+<a href="https://www.blogger.com/delete-comment.g?blogID=5845022975130610385&amp;postID=4191074923781404200" title="Delete Comment">
+<img src="./Run Jetty in the Maven life-cycle_files/icon_delete13.gif">
+</a>
+</span>
+</div>
+<p>
+Fantastic summary. <br><br>One thing you may want to point out is that if you're upgrading from Jetty 6 to Jetty 7 or 8 then you'll need to make remove (or update?) your webapp/WEB-INF/jetty-env.xml file. Otherwise, you'll start getting ClassNotFoundException for org.mortbay.jetty.webapp.WebAppContext on mvn jetty:run because that class was removed in Jetty 7.
+<span class="interaction-iframe-guide"></span>
+</p>
+</div>
+</li>
+<li class="comment even">
+<div class="comment-body">
+<div class="comment-author vcard">
+<a name="c7806953573366500823"></a>
+<div class="avatar-image-container avatar-stock"><span dir="ltr"><a href="https://www.blogger.com/profile/18434436662196373333" rel="nofollow" onclick="" class="avatar-hovercard" id="av-7806953573366500823-18434436662196373333"><img src="./Run Jetty in the Maven life-cycle_files/zFdxGE77vvD2w5xHy6jkVuElKv-U9_9qLkRYK8OnbDeJPtjSZ82UPq5w6hJ-SA=s35-w35" width="35" height="35" alt="" title="Rich">
+
+</a></span></div>
+<cite class="fn">
+<a href="https://www.blogger.com/profile/18434436662196373333" rel="nofollow">Rich</a>
+</cite>
+<span class="says">says:</span>
+</div>
+<div class="comment-meta commentmetadata">
+<a href="http://www.benoitschweblin.com/2013/03/run-jetty-in-maven-life-cycle.html?showComment=1388503175754#c7806953573366500823" title="comment permalink">
+31 December 2013 at 07:19
+</a>
+<span class="item-control blog-admin pid-684601649">
+<a href="https://www.blogger.com/delete-comment.g?blogID=5845022975130610385&amp;postID=7806953573366500823" title="Delete Comment">
+<img src="./Run Jetty in the Maven life-cycle_files/icon_delete13.gif">
+</a>
+</span>
+</div>
+<p>
+Excellent write up, thank you.<br><br>Side note: It looks like in Jetty 9 the "webAppConfig" element has been renamed to "webApp". i.e. for contextPath.<br><br>http://wiki.eclipse.org/Jetty/Feature/Jetty_Maven_Plugin
+<span class="interaction-iframe-guide"></span>
+</p>
+</div>
+</li>
+<li class="comment even">
+<div class="comment-body">
+<div class="comment-author vcard">
+<a name="c2822856149555766963"></a>
+<div class="avatar-image-container vcard"><span dir="ltr"><a href="https://www.blogger.com/profile/16457514551214542630" rel="nofollow" onclick="" class="avatar-hovercard" id="av-2822856149555766963-16457514551214542630"><img src="./Run Jetty in the Maven life-cycle_files/saitoti.png" width="35" height="35" alt="" class="delayLoad" longdesc="//2.bp.blogspot.com/_iSGGafbS2U4/SnF71OPKlbI/AAAAAAAAAAk/eo2LHMFbYBU/S45-s35/saitoti.png" title="Eric Njogu">
+
+<noscript>&lt;img src="//2.bp.blogspot.com/_iSGGafbS2U4/SnF71OPKlbI/AAAAAAAAAAk/eo2LHMFbYBU/S45-s35/saitoti.png" width="35" height="35" class="photo" alt=""&gt;</noscript></a></span></div>
+<cite class="fn">
+<a href="https://www.blogger.com/profile/16457514551214542630" rel="nofollow">Eric Njogu</a>
+</cite>
+<span class="says">says:</span>
+</div>
+<div class="comment-meta commentmetadata">
+<a href="http://www.benoitschweblin.com/2013/03/run-jetty-in-maven-life-cycle.html?showComment=1390560220075#c2822856149555766963" title="comment permalink">
+24 January 2014 at 02:43
+</a>
+<span class="item-control blog-admin pid-1986665933">
+<a href="https://www.blogger.com/delete-comment.g?blogID=5845022975130610385&amp;postID=2822856149555766963" title="Delete Comment">
+<img src="./Run Jetty in the Maven life-cycle_files/icon_delete13.gif">
+</a>
+</span>
+</div>
+<p>
+Many thanks for this article which I found very helpful. God bless you.
+<span class="interaction-iframe-guide"></span>
+</p>
+</div>
+</li>
+<li class="comment even">
+<div class="comment-body">
+<div class="comment-author vcard">
+<a name="c7411863788043182621"></a>
+<div class="avatar-image-container avatar-stock"><span dir="ltr"><a href="https://www.blogger.com/profile/15590799088558280925" rel="nofollow" onclick="" class="avatar-hovercard" id="av-7411863788043182621-15590799088558280925"><img src="./Run Jetty in the Maven life-cycle_files/zFdxGE77vvD2w5xHy6jkVuElKv-U9_9qLkRYK8OnbDeJPtjSZ82UPq5w6hJ-SA=s35-w35" width="35" height="35" alt="" title="Unknown">
+
+</a></span></div>
+<cite class="fn">
+<a href="https://www.blogger.com/profile/15590799088558280925" rel="nofollow">Unknown</a>
+</cite>
+<span class="says">says:</span>
+</div>
+<div class="comment-meta commentmetadata">
+<a href="http://www.benoitschweblin.com/2013/03/run-jetty-in-maven-life-cycle.html?showComment=1454403991758#c7411863788043182621" title="comment permalink">
+2 February 2016 at 01:06
+</a>
+<span class="item-control blog-admin pid-966868844">
+<a href="https://www.blogger.com/delete-comment.g?blogID=5845022975130610385&amp;postID=7411863788043182621" title="Delete Comment">
+<img src="./Run Jetty in the Maven life-cycle_files/icon_delete13.gif">
+</a>
+</span>
+</div>
+<p>
+F A N T A S T I C!<br>Thaaaanks
+<span class="interaction-iframe-guide"></span>
+</p>
+</div>
+</li>
+</ol>
+<p class="comment-footer">
+</p><div id="comment-form">
+<div id="respond">
+<a name="comment-form"></a>
+<h3>Leave a Reply</h3>
+<p>
+</p>
+<a href="https://www.blogger.com/comment-iframe.g?blogID=5845022975130610385&amp;postID=1032903560279782968&amp;blogspotRpcToken=6694422" id="comment-editor-src"></a>
+<iframe allowtransparency="true" class="blogger-iframe-colorize blogger-comment-from-post" frameborder="0" height="410px" id="comment-editor" name="comment-editor" src="./Run Jetty in the Maven life-cycle_files/comment-iframe.html" width="103%" data-resized="true"></iframe>
+<script type="text/javascript" src="./Run Jetty in the Maven life-cycle_files/2870402004-comment_from_post_iframe.js.download"></script>
+<script type="text/javascript">
+BLOG_CMT_createIframe('https://www.blogger.com/rpc_relay.html', '16251021802452432456');
+</script>
+</div>
+</div>
+<p></p>
+<div id="backlinks-container">
+<div id="Blog1_backlinks-container">
+</div>
+</div>
+</div>
+</div>
+
+</div></div>
+</div>
+<div class="clear"></div>
+<div class="blog-pager" id="blog-pager">
+</div>
+<div class="clear"></div>
+</div></div>
+<script type="text/javascript">
+
+var home_page_url = location.href;	
+
+
+var pageCount=2;
+var displayPageNum=4;
+var upPageWord ='Previous';
+var downPageWord ='Next';
+
+
+function showpageCount(json) {
+var thisUrl = home_page_url;
+var htmlMap = new Array();
+var thisNum = 1;
+var postNum=1;
+var itemCount = 0;
+var fFlag = 0;
+var eFlag = 0;
+var html= '';
+var upPageHtml ='';
+var downPageHtml ='';
+
+
+
+htmlMap[htmlMap.length]='/';
+postNum++;
+
+for(var i=pageCount-1, post; post = json.feed.entry[i]; i=i+pageCount) {
+
+		
+	var timestamp1 = post.published.$t.substring(0,19)+post.published.$t.substring(23,29);
+	timestamp = encodeURIComponent(timestamp1);
+	var title = post.title.$t;
+			if(thisUrl.indexOf(timestamp)!=-1 ){
+					thisNum = postNum;
+			}
+	
+			postNum++;
+			htmlMap[htmlMap.length] = '/search?updated-max='+timestamp+'&max-results='+pageCount;
+	
+}
+
+var banyaknomer = htmlMap.length;
+if (json.feed.entry.length % pageCount == 0){
+	var banyaknomer = htmlMap.length -1 ;
+	postNum=postNum-1;
+};
+
+	
+for(var p =0;p< banyaknomer;p++){
+	if(p>=(thisNum-displayPageNum-1) && p<(thisNum+displayPageNum)){
+		if(fFlag ==0 && p == thisNum-2){
+			if(thisNum==2){
+				upPageHtml = '<span class="showpage"><a href="/">'+ upPageWord +'</a></span>';
+			}else{
+				upPageHtml = '<span class="showpage"><a href="'+htmlMap[p]+'">'+ upPageWord +'</a></span>';
+			}
+	
+			fFlag++;
+		}
+	
+		if(p==(thisNum-1)){
+			html += '<span class="showpagePoint">'+thisNum+'</span>';
+		}else{
+			if(p==0){
+					html += '<span class="showpageNum"><a href="/">1</a></span>';
+
+			}else{
+				html += '<span class="showpageNum"><a href="'+htmlMap[p]+'">'+ (p+1) +'</a></span>';
+			}
+		}
+	
+		if(eFlag ==0 && p == thisNum){
+			downPageHtml = '<span class="showpage"> <a href="'+htmlMap[p]+'">'+ downPageWord +'</a></span>';
+			eFlag++;
+		}
+	}
+}
+	
+if(thisNum>1){
+	html = ''+upPageHtml+' '+html +' ';
+}
+	
+html = '<div class="showpageArea"><span style="COLOR: #000;" class="showpageOf"> Pages ('+(postNum-1)+')</span>'+html;
+	
+if(thisNum<(postNum-1)){
+	html += downPageHtml;	
+}
+	
+if(postNum==1) postNum++;
+html += '</div>';
+	
+
+var pageArea = document.getElementsByName("pageArea");
+var blogPager = document.getElementById("blog-pager");
+
+if(postNum <= 2){
+	html ='';
+}
+
+for(var p =0;p< pageArea.length;p++){
+	pageArea[p].innerHTML = html;
+}
+
+
+if(pageArea&&pageArea.length>0){
+	html ='';
+}
+
+if(blogPager){
+	blogPager.innerHTML = html;
+}
+
+
+}
+
+
+function showpageCount2(json) {
+
+var thisUrl = home_page_url;
+var htmlMap = new Array();
+var isLablePage = thisUrl.indexOf("/search/label/")!=-1;
+var thisLable = isLablePage ? thisUrl.substr(thisUrl.indexOf("/search/label/")+14,thisUrl.length) : "";
+thisLable = thisLable.indexOf("?")!=-1 ? thisLable.substr(0,thisLable.indexOf("?")) : thisLable;
+var thisNum = 1;
+var postNum=1;
+var itemCount = 0;
+var fFlag = 0;
+var eFlag = 0;
+var html= '';
+var upPageHtml ='';
+var downPageHtml ='';
+
+
+
+var labelHtml = '<span class="showpageNum"><a href="/search/label/'+thisLable+'?&max-results='+pageCount+'">';
+var thisUrl = home_page_url;	
+
+htmlMap[htmlMap.length]=labelHtml;
+postNum++;
+
+for(var i=pageCount-1, post; post = json.feed.entry[i]; i=i+pageCount) {
+	var timestamp1 = post.published.$t.substring(0,19)+post.published.$t.substring(23,29);
+	timestamp = encodeURIComponent(timestamp1);
+
+	
+	var title = post.title.$t;
+
+			if(thisUrl.indexOf(timestamp)!=-1 ){
+				thisNum = postNum;
+			}
+	
+			if(title!='') postNum++;
+			htmlMap[htmlMap.length] = '/search/label/'+thisLable+'?updated-max='+timestamp+'&max-results='+pageCount;
+				
+	itemCount++;
+}
+
+var banyaknomer = htmlMap.length;
+if (json.feed.entry.length % pageCount == 0){
+	var banyaknomer = htmlMap.length -1 ;
+	postNum=postNum-1;
+};
+	
+for(var p =0;p< banyaknomer;p++){
+	if(p>=(thisNum-displayPageNum-1) && p<(thisNum+displayPageNum)){
+		if(fFlag ==0 && p == thisNum-2){
+			if(thisNum==2){
+				upPageHtml = labelHtml + upPageWord +'</a></span>';
+			}else{
+				upPageHtml = '<span class="showpage"><a href="'+htmlMap[p]+'">'+ upPageWord +'</a></span>';
+			}
+	
+			fFlag++;
+		}
+	
+		if(p==(thisNum-1)){
+			html += '<span class="showpagePoint">'+thisNum+'</span>';
+		}else{
+			if(p==0){
+				html = labelHtml+'1</a></span>';
+			}else{
+				html += '<span class="showpageNum"><a href="'+htmlMap[p]+'">'+ (p+1) +'</a></span>';
+			}
+		}
+	
+		if(eFlag ==0 && p == thisNum){
+			downPageHtml = '<span class="showpage"> <a href="'+htmlMap[p]+'">'+ downPageWord +'</a></span>';
+			eFlag++;
+		}
+	}
+}
+	
+if(thisNum>1){
+	if(!isLablePage){
+		html = ''+upPageHtml+' '+html +' ';
+	}else{
+		html = ''+upPageHtml+' '+html +' ';
+	}
+}
+	
+html = '<div class="showpageArea"><span style="COLOR: #000;" class="showpageOf"> Pages ('+(postNum-1)+')</span>'+html;
+	
+if(thisNum<(postNum-1)){
+	html += downPageHtml;	
+}
+	
+if(postNum==1) postNum++;
+html += '</div>';
+	
+var pageArea = document.getElementsByName("pageArea");
+var blogPager = document.getElementById("blog-pager");
+
+if(postNum <= 2){
+	html ='';
+}
+
+for(var p =0;p< pageArea.length;p++){
+	pageArea[p].innerHTML = html;
+}
+
+if(pageArea&&pageArea.length>0){
+	html ='';
+}
+
+if(blogPager){
+	blogPager.innerHTML = html;
+}
+
+
+}
+
+
+</script>
+<script type="text/javascript">
+
+ 	var thisUrl = home_page_url;
+	if (thisUrl.indexOf("/search/label/")!=-1){
+		if (thisUrl.indexOf("?updated-max")!=-1){
+			var lblname1 = thisUrl.substring(thisUrl.indexOf("/search/label/")+14,thisUrl.indexOf("?updated-max"));
+		}else{
+			var lblname1 = thisUrl.substring(thisUrl.indexOf("/search/label/")+14,thisUrl.indexOf("?&max"));
+		}
+	}
+
+	var home_page = "/";
+	if (thisUrl.indexOf("?q=")==-1 && thisUrl.indexOf(".html")==-1){	
+		if (thisUrl.indexOf("/search/label/")==-1){			
+			document.write('<script src="'+home_page+'feeds/posts/summary?alt=json-in-script&callback=showpageCount&max-results=99999" ><\/script>')
+		}else{document.write('<script src="'+home_page+'feeds/posts/full/-/'+lblname1+'?alt=json-in-script&callback=showpageCount2&max-results=99999" ><\/script>')
+		}
+	}
+</script>
+</div>
+<div id="sidebar-wrapper">
+<div class="clear"></div>
+<div class="sidebar section" id="sidebar"><div class="widget HTML" data-version="1" id="HTML3">
+<h2 class="title">Recommend</h2>
+<div class="widget-content">
+<dl class="recommend-block">
+<dt>
+
+<!-- Place this tag where you want the +1 button to render. -->
+<div id="___plusone_1" style="text-indent: 0px; margin: 0px; padding: 0px; background: transparent; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: baseline; display: inline-block; width: 50px; height: 60px;"><iframe frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 50px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 60px;" tabindex="0" vspace="0" width="100%" id="I1_1477576743757" name="I1_1477576743757" src="./Run Jetty in the Maven life-cycle_files/fastbutton(1).html" data-gapiattached="true" title="+1"></iframe></div>
+
+</dt>
+<dt>
+
+<iframe id="twitter-widget-1" scrolling="no" frameborder="0" allowtransparency="true" class="twitter-share-button twitter-share-button-rendered twitter-tweet-button" title="Twitter Tweet Button" src="./Run Jetty in the Maven life-cycle_files/tweet_button.39f7ee9fffbd122b7a37a520dbdaebc6.en(1).html" style="position: static; visibility: visible; width: 60px; height: 20px;"></iframe>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+</dt>
+<dt>
+
+<script src="./Run Jetty in the Maven life-cycle_files/in.js.download" type="text/javascript"></script>
+<span class="IN-widget" style="line-height: 1; vertical-align: baseline; display: inline-block; text-align: center;"><span style="padding: 0px !important; margin: 0px !important; text-indent: 0px !important; display: inline-block !important; vertical-align: baseline !important; font-size: 1px !important;"><span id="li_ui_li_gen_1477576744446_3-container" class="IN-top IN-empty"><span id="li_ui_li_gen_1477576744446_3" class="IN-top"><span id="li_ui_li_gen_1477576744446_3-inner" class="IN-top"><span id="li_ui_li_gen_1477576744446_3-content" class="IN-top">0</span></span></span></span></span><br><span style="padding: 0px !important; margin: 0px !important; text-indent: 0px !important; display: inline-block !important; vertical-align: baseline !important; font-size: 1px !important;"><span id="li_ui_li_gen_1477576744444_2"><a id="li_ui_li_gen_1477576744444_2-link" href="javascript:void(0);"><span id="li_ui_li_gen_1477576744444_2-logo">in</span><span id="li_ui_li_gen_1477576744444_2-title"><span id="li_ui_li_gen_1477576744444_2-mark"></span><span id="li_ui_li_gen_1477576744444_2-title-text">Share</span></span></a></span></span></span><script type="IN/Share+init" data-counter="top"></script>
+
+</dt>
+</dl>
+</div>
+<div class="clear"></div>
+<span class="widget-item-control">
+<span class="item-control blog-admin">
+<a class="quickedit" href="http://www.blogger.com/rearrange?blogID=5845022975130610385&amp;widgetType=HTML&amp;widgetId=HTML3&amp;action=editWidget&amp;sectionId=sidebar" onclick="return _WidgetManager._PopupConfig(document.getElementById(&quot;HTML3&quot;));" target="configHTML3" title="Edit">
+<img alt="" height="18" src="./Run Jetty in the Maven life-cycle_files/icon18_wrench_allbkg.png" width="18">
+</a>
+</span>
+</span>
+<div class="clear"></div>
+</div><div class="widget Profile" data-version="1" id="Profile1">
+<h2>About Me</h2>
+<div class="widget-content">
+<a href="https://plus.google.com/109528932743706586931&amp;rel=author"><img alt="My Photo" class="profile-img" height="80" src="./Run Jetty in the Maven life-cycle_files/photo.jpg" width="80"></a>
+<dl class="profile-datablock">
+<dt class="profile-data">
+<a class="sociallink inlink" href="http://www.linkedin.com/in/benoitschweblin" rel="author"></a>
+<a class="sociallink twlink" href="https://twitter.com/Benweet" rel="author"></a>
+<a class="sociallink fblink" href="http://www.facebook.com/public/Benoit-Schweblin" rel="author"></a>
+<a class="sociallink gplink" href="https://plus.google.com/109528932743706586931" rel="author"></a>
+</dt>
+</dl>
+<div class="profile-link-entry"><a href="http://www.benoitschweblin.com/p/who-am-i.html">Who am I?</a></div>
+<div class="profile-link-entry"><a href="https://stackedit.io/viewer#!url=https://googledrive.com/host/0B5yGYUJ1tHx5MkZDcnBxeVp4ZFE/resume.md" target="_blank">My résumé</a></div>
+<a class="profile-link" href="https://plus.google.com/109528932743706586931" rel="author">View my complete profile</a>
+<div class="clear"></div>
+<span class="widget-item-control">
+<span class="item-control blog-admin">
+<a class="quickedit" href="http://www.blogger.com/rearrange?blogID=5845022975130610385&amp;widgetType=Profile&amp;widgetId=Profile1&amp;action=editWidget&amp;sectionId=sidebar" onclick="return _WidgetManager._PopupConfig(document.getElementById(&quot;Profile1&quot;));" target="configProfile1" title="Edit">
+<img alt="" height="18" src="./Run Jetty in the Maven life-cycle_files/icon18_wrench_allbkg.png" width="18">
+</a>
+</span>
+</span>
+<div class="clear"></div>
+</div>
+</div><div class="widget Label" data-version="1" id="Label6">
+<h2>Labels</h2>
+<div class="widget-content list-label-widget-content">
+<ul>
+<li>
+<a dir="ltr" href="http://www.benoitschweblin.com/search/label/Jetty">Jetty</a>
+<span dir="ltr">(1)</span>
+</li>
+<li>
+<a dir="ltr" href="http://www.benoitschweblin.com/search/label/Maven">Maven</a>
+<span dir="ltr">(1)</span>
+</li>
+</ul>
+</div>
+</div><div class="widget PopularPosts" data-version="1" id="PopularPosts1">
+<h2>Popular Posts</h2>
+<div class="widget-content popular-posts">
+<ul>
+<li>
+<div class="item-content">
+<div class="item-thumbnail">
+<a href="http://www.benoitschweblin.com/2013/03/run-jetty-in-maven-life-cycle.html" target="_blank">
+<img alt="" border="0" src="./Run Jetty in the Maven life-cycle_files/jetty_logo(1).png">
+</a>
+</div>
+<div class="item-title"><a href="http://www.benoitschweblin.com/2013/03/run-jetty-in-maven-life-cycle.html">Run Jetty in the Maven life-cycle</a></div>
+<div class="item-snippet">  In the Java EE kingdom, JBoss Application Server is king. But sometimes it's nice to have a lighter container to run during our develo...</div>
+</div>
+<div style="clear: both;"></div>
+</li>
+</ul>
+<div class="clear"></div>
+<span class="widget-item-control">
+<span class="item-control blog-admin">
+<a class="quickedit" href="http://www.blogger.com/rearrange?blogID=5845022975130610385&amp;widgetType=PopularPosts&amp;widgetId=PopularPosts1&amp;action=editWidget&amp;sectionId=sidebar" onclick="return _WidgetManager._PopupConfig(document.getElementById(&quot;PopularPosts1&quot;));" target="configPopularPosts1" title="Edit">
+<img alt="" height="18" src="./Run Jetty in the Maven life-cycle_files/icon18_wrench_allbkg.png" width="18">
+</a>
+</span>
+</span>
+<div class="clear"></div>
+</div>
+</div><div class="widget BlogArchive" data-version="1" id="BlogArchive1">
+<h2>Blog Archive</h2>
+<div class="widget-content">
+<div id="ArchiveList">
+<div id="BlogArchive1_ArchiveList">
+<ul class="hierarchy">
+<li class="archivedate expanded">
+<a class="toggle" href="javascript:void(0)">
+<span class="zippy toggle-open">
+
+        ▼&nbsp;
+      
+</span>
+</a>
+<a class="post-count-link" href="http://www.benoitschweblin.com/search?updated-min=2013-01-01T00:00:00-08:00&amp;updated-max=2014-01-01T00:00:00-08:00&amp;max-results=1">
+2013
+</a>
+<span class="post-count" dir="ltr">(1)</span>
+<ul class="hierarchy">
+<li class="archivedate expanded">
+<a class="toggle" href="javascript:void(0)">
+<span class="zippy toggle-open">
+
+        ▼&nbsp;
+      
+</span>
+</a>
+<a class="post-count-link" href="http://www.benoitschweblin.com/2013_03_01_archive.html">
+March
+</a>
+<span class="post-count" dir="ltr">(1)</span>
+<ul class="posts">
+<li><a href="http://www.benoitschweblin.com/2013/03/run-jetty-in-maven-life-cycle.html">Run Jetty in the Maven life-cycle</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="clear"></div>
+<span class="widget-item-control">
+<span class="item-control blog-admin">
+<a class="quickedit" href="http://www.blogger.com/rearrange?blogID=5845022975130610385&amp;widgetType=BlogArchive&amp;widgetId=BlogArchive1&amp;action=editWidget&amp;sectionId=sidebar" onclick="return _WidgetManager._PopupConfig(document.getElementById(&quot;BlogArchive1&quot;));" target="configBlogArchive1" title="Edit">
+<img alt="" height="18" src="./Run Jetty in the Maven life-cycle_files/icon18_wrench_allbkg.png" width="18">
+</a>
+</span>
+</span>
+<div class="clear"></div>
+</div>
+</div>
+<div class="widget Subscribe" data-version="1" id="Subscribe1">
+<div style="white-space:nowrap">
+<h2 class="title">Subscribe</h2>
+<div class="widget-content">
+<div class="subscribe-wrapper subscribe-type-POST">
+<div class="subscribe expanded subscribe-type-POST" id="SW_READER_LIST_Subscribe1POST" style="display:none;">
+<div class="top">
+<span class="inner" onclick="return(_SW_toggleReaderList(event, &quot;Subscribe1POST&quot;));">
+<img class="subscribe-dropdown-arrow" src="./Run Jetty in the Maven life-cycle_files/arrow_dropdown.gif">
+<img align="absmiddle" alt="" border="0" class="feed-icon" src="./Run Jetty in the Maven life-cycle_files/icon_feed12.png">
+Posts
+</span>
+<div class="feed-reader-links">
+<a class="feed-reader-link" href="https://www.netvibes.com/subscribe.php?url=http%3A%2F%2Fwww.benoitschweblin.com%2Ffeeds%2Fposts%2Fdefault" target="_blank">
+<img src="./Run Jetty in the Maven life-cycle_files/subscribe-netvibes.png">
+</a>
+<a class="feed-reader-link" href="https://add.my.yahoo.com/content?url=http%3A%2F%2Fwww.benoitschweblin.com%2Ffeeds%2Fposts%2Fdefault" target="_blank">
+<img src="./Run Jetty in the Maven life-cycle_files/subscribe-yahoo.png">
+</a>
+<a class="feed-reader-link" href="http://www.benoitschweblin.com/feeds/posts/default" target="_blank">
+<img align="absmiddle" class="feed-icon" src="./Run Jetty in the Maven life-cycle_files/icon_feed12.png">
+                  Atom
+                </a>
+</div>
+</div>
+<div class="bottom"></div>
+</div>
+<div class="subscribe" id="SW_READER_LIST_CLOSED_Subscribe1POST" onclick="return(_SW_toggleReaderList(event, &quot;Subscribe1POST&quot;));">
+<div class="top">
+<span class="inner">
+<img class="subscribe-dropdown-arrow" src="./Run Jetty in the Maven life-cycle_files/arrow_dropdown.gif">
+<span onclick="return(_SW_toggleReaderList(event, &quot;Subscribe1POST&quot;));">
+<img align="absmiddle" alt="" border="0" class="feed-icon" src="./Run Jetty in the Maven life-cycle_files/icon_feed12.png">
+Posts
+</span>
+</span>
+</div>
+<div class="bottom"></div>
+</div>
+</div>
+<div class="subscribe-wrapper subscribe-type-PER_POST">
+<div class="subscribe expanded subscribe-type-PER_POST" id="SW_READER_LIST_Subscribe1PER_POST" style="display:none;">
+<div class="top">
+<span class="inner" onclick="return(_SW_toggleReaderList(event, &quot;Subscribe1PER_POST&quot;));">
+<img class="subscribe-dropdown-arrow" src="./Run Jetty in the Maven life-cycle_files/arrow_dropdown.gif">
+<img align="absmiddle" alt="" border="0" class="feed-icon" src="./Run Jetty in the Maven life-cycle_files/icon_feed12.png">
+Comments
+</span>
+<div class="feed-reader-links">
+<a class="feed-reader-link" href="https://www.netvibes.com/subscribe.php?url=http%3A%2F%2Fwww.benoitschweblin.com%2Ffeeds%2F1032903560279782968%2Fcomments%2Fdefault" target="_blank">
+<img src="./Run Jetty in the Maven life-cycle_files/subscribe-netvibes.png">
+</a>
+<a class="feed-reader-link" href="https://add.my.yahoo.com/content?url=http%3A%2F%2Fwww.benoitschweblin.com%2Ffeeds%2F1032903560279782968%2Fcomments%2Fdefault" target="_blank">
+<img src="./Run Jetty in the Maven life-cycle_files/subscribe-yahoo.png">
+</a>
+<a class="feed-reader-link" href="http://www.benoitschweblin.com/feeds/1032903560279782968/comments/default" target="_blank">
+<img align="absmiddle" class="feed-icon" src="./Run Jetty in the Maven life-cycle_files/icon_feed12.png">
+                  Atom
+                </a>
+</div>
+</div>
+<div class="bottom"></div>
+</div>
+<div class="subscribe" id="SW_READER_LIST_CLOSED_Subscribe1PER_POST" onclick="return(_SW_toggleReaderList(event, &quot;Subscribe1PER_POST&quot;));">
+<div class="top">
+<span class="inner">
+<img class="subscribe-dropdown-arrow" src="./Run Jetty in the Maven life-cycle_files/arrow_dropdown.gif">
+<span onclick="return(_SW_toggleReaderList(event, &quot;Subscribe1PER_POST&quot;));">
+<img align="absmiddle" alt="" border="0" class="feed-icon" src="./Run Jetty in the Maven life-cycle_files/icon_feed12.png">
+Comments
+</span>
+</span>
+</div>
+<div class="bottom"></div>
+</div>
+</div>
+<div style="clear:both"></div>
+</div>
+</div>
+<div class="clear"></div>
+<span class="widget-item-control">
+<span class="item-control blog-admin">
+<a class="quickedit" href="http://www.blogger.com/rearrange?blogID=5845022975130610385&amp;widgetType=Subscribe&amp;widgetId=Subscribe1&amp;action=editWidget&amp;sectionId=sidebar" onclick="return _WidgetManager._PopupConfig(document.getElementById(&quot;Subscribe1&quot;));" target="configSubscribe1" title="Edit">
+<img alt="" height="18" src="./Run Jetty in the Maven life-cycle_files/icon18_wrench_allbkg.png" width="18">
+</a>
+</span>
+</span>
+<div class="clear"></div>
+</div><div class="widget Navbar" data-version="1" id="Navbar1"><script type="text/javascript">
+    function setAttributeOnload(object, attribute, val) {
+      if(window.addEventListener) {
+        window.addEventListener('load',
+          function(){ object[attribute] = val; }, false);
+      } else {
+        window.attachEvent('onload', function(){ object[attribute] = val; });
+      }
+    }
+  </script>
+<div id="navbar-iframe-container"><iframe frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="" tabindex="0" vspace="0" width="100%" id="navbar-iframe" name="navbar-iframe" src="./Run Jetty in the Maven life-cycle_files/navbar.html"></iframe></div>
+<script type="text/javascript" src="./Run Jetty in the Maven life-cycle_files/plusone.js.download" gapi_processed="true"></script>
+<script type="text/javascript">
+      gapi.load("gapi.iframes:gapi.iframes.style.bubble", function() {
+        if (gapi.iframes && gapi.iframes.getContext) {
+          gapi.iframes.getContext().openChild({
+              url: 'https://www.blogger.com/navbar.g?targetBlogID\x3d5845022975130610385\x26blogName\x3dBenoit+Schweblin+\x27s/blo//g\x27\x26publishMode\x3dPUBLISH_MODE_HOSTED\x26navbarType\x3dLIGHT\x26layoutType\x3dLAYOUTS\x26searchRoot\x3dhttp://www.benoitschweblin.com/search\x26blogLocale\x3den_GB\x26v\x3d2\x26homepageUrl\x3dhttp://www.benoitschweblin.com/\x26targetPostID\x3d1032903560279782968\x26blogPostOrPageUrl\x3dhttp://www.benoitschweblin.com/2013/03/run-jetty-in-maven-life-cycle.html\x26vt\x3d8940914259227331278',
+              where: document.getElementById("navbar-iframe-container"),
+              id: "navbar-iframe"
+          });
+        }
+      });
+    </script><script type="text/javascript">
+(function() {
+var script = document.createElement('script');
+script.type = 'text/javascript';
+script.src = '//pagead2.googlesyndication.com/pagead/js/google_top_exp.js';
+var head = document.getElementsByTagName('head')[0];
+if (head) {
+head.appendChild(script);
+}})();
+</script>
+</div><div class="widget BlogSearch" data-version="1" id="BlogSearch1">
+<h2 class="title">Search This Blog</h2>
+<div class="widget-content">
+<div id="BlogSearch1_form">
+<form action="http://www.benoitschweblin.com/search" class="gsc-search-box">
+<table cellpadding="0" cellspacing="0" class="gsc-search-box">
+<tbody>
+<tr>
+<td class="gsc-input">
+<input autocomplete="off" class="gsc-input" name="q" size="10" title="search" type="text" value="">
+</td>
+<td class="gsc-search-button">
+<input class="gsc-search-button" title="search" type="submit" value="Search">
+</td>
+</tr>
+</tbody>
+</table>
+</form>
+</div>
+</div>
+<div class="clear"></div>
+<span class="widget-item-control">
+<span class="item-control blog-admin">
+<a class="quickedit" href="http://www.blogger.com/rearrange?blogID=5845022975130610385&amp;widgetType=BlogSearch&amp;widgetId=BlogSearch1&amp;action=editWidget&amp;sectionId=sidebar" onclick="return _WidgetManager._PopupConfig(document.getElementById(&quot;BlogSearch1&quot;));" target="configBlogSearch1" title="Edit">
+<img alt="" height="18" src="./Run Jetty in the Maven life-cycle_files/icon18_wrench_allbkg.png" width="18">
+</a>
+</span>
+</span>
+<div class="clear"></div>
+</div>
+<div class="widget HTML" data-version="1" id="HTML1">
+<h2 class="title">Recommend</h2>
+<div class="widget-content">
+<dl class="recommend-block">
+<dt>
+
+<!-- Place this tag where you want the +1 button to render. -->
+<div id="___plusone_2" style="text-indent: 0px; margin: 0px; padding: 0px; background: transparent; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: baseline; display: inline-block; width: 50px; height: 60px;"><iframe frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 50px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 60px;" tabindex="0" vspace="0" width="100%" id="I0_1477576744857" name="I0_1477576744857" src="./Run Jetty in the Maven life-cycle_files/fastbutton(2).html" data-gapiattached="true" title="+1"></iframe></div>
+
+</dt>
+<dt>
+
+<iframe id="twitter-widget-2" scrolling="no" frameborder="0" allowtransparency="true" class="twitter-share-button twitter-share-button-rendered twitter-tweet-button" title="Twitter Tweet Button" src="./Run Jetty in the Maven life-cycle_files/tweet_button.39f7ee9fffbd122b7a37a520dbdaebc6.en(2).html" style="position: static; visibility: visible; width: 60px; height: 20px;"></iframe>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+</dt>
+<dt>
+
+<script src="./Run Jetty in the Maven life-cycle_files/in.js.download" type="text/javascript"></script>
+<span class="IN-widget" style="line-height: 1; vertical-align: baseline; display: inline-block; text-align: center;"><span style="padding: 0px !important; margin: 0px !important; text-indent: 0px !important; display: inline-block !important; vertical-align: baseline !important; font-size: 1px !important;"><span id="li_ui_li_gen_1477576745121_5-container" class="IN-top IN-empty"><span id="li_ui_li_gen_1477576745121_5" class="IN-top"><span id="li_ui_li_gen_1477576745121_5-inner" class="IN-top"><span id="li_ui_li_gen_1477576745121_5-content" class="IN-top">0</span></span></span></span></span><br><span style="padding: 0px !important; margin: 0px !important; text-indent: 0px !important; display: inline-block !important; vertical-align: baseline !important; font-size: 1px !important;"><span id="li_ui_li_gen_1477576745119_4"><a id="li_ui_li_gen_1477576745119_4-link" href="javascript:void(0);"><span id="li_ui_li_gen_1477576745119_4-logo">in</span><span id="li_ui_li_gen_1477576745119_4-title"><span id="li_ui_li_gen_1477576745119_4-mark"></span><span id="li_ui_li_gen_1477576745119_4-title-text">Share</span></span></a></span></span></span><script type="IN/Share+init" data-counter="top"></script>
+
+</dt>
+</dl>
+</div>
+<div class="clear"></div>
+<span class="widget-item-control">
+<span class="item-control blog-admin">
+<a class="quickedit" href="http://www.blogger.com/rearrange?blogID=5845022975130610385&amp;widgetType=HTML&amp;widgetId=HTML1&amp;action=editWidget&amp;sectionId=sidebar" onclick="return _WidgetManager._PopupConfig(document.getElementById(&quot;HTML1&quot;));" target="configHTML1" title="Edit">
+<img alt="" height="18" src="./Run Jetty in the Maven life-cycle_files/icon18_wrench_allbkg.png" width="18">
+</a>
+</span>
+</span>
+<div class="clear"></div>
+</div></div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="bottomcover ">
+<div id="bottom">
+<div class="botwid">
+<div class="lowerbar section" id="lowerbar1"><div class="widget Label" data-version="1" id="Label2">
+<h2>Labels</h2>
+<div class="widget-content list-label-widget-content">
+<ul>
+<li>
+<script type="text/javascript">
+  var lblname = "Jetty";
+
+  lblname2 = encodeURIComponent(lblname);
+  var feedlink = '/search/label/' + lblname2+'?&max-results=2';
+  document.write('<a href="' + feedlink + '">'+lblname+'</a>');
+</script><a href="http://www.benoitschweblin.com/search/label/Jetty?&amp;max-results=2">Jetty</a>
+<span dir="ltr">(1)</span>
+</li>
+<li>
+<script type="text/javascript">
+  var lblname = "Maven";
+
+  lblname2 = encodeURIComponent(lblname);
+  var feedlink = '/search/label/' + lblname2+'?&max-results=2';
+  document.write('<a href="' + feedlink + '">'+lblname+'</a>');
+</script><a href="http://www.benoitschweblin.com/search/label/Maven?&amp;max-results=2">Maven</a>
+<span dir="ltr">(1)</span>
+</li>
+</ul>
+<div class="clear"></div>
+<span class="widget-item-control">
+<span class="item-control blog-admin">
+<a class="quickedit" href="http://www.blogger.com/rearrange?blogID=5845022975130610385&amp;widgetType=Label&amp;widgetId=Label2&amp;action=editWidget&amp;sectionId=lowerbar1" onclick="return _WidgetManager._PopupConfig(document.getElementById(&quot;Label2&quot;));" target="configLabel2" title="Edit">
+<img alt="" height="18" src="./Run Jetty in the Maven life-cycle_files/icon18_wrench_allbkg.png" width="18">
+</a>
+</span>
+</span>
+<div class="clear"></div>
+</div>
+</div></div>
+</div>
+<div class="botwid">
+<div class="lowerbar no-items section" id="lowerbar2"></div>
+</div>
+<div class="botwid">
+<div class="lowerbar no-items section" id="lowerbar3"></div>
+</div>
+<div class="botwid">
+<div class="lowerbar section" id="lowerbar4"><div class="widget HTML" data-version="1" id="HTML2">
+<div class="widget-content">
+<ul>
+	  <li class="profile-link-entry" style="text-align: right;"><a href="http://www.benweet.com/p/who-am-i.html">Who am I?</a></li>
+	  <li class="profile-link-entry" style="text-align: right;"><a href="https://googledrive.com/host/0B5yGYUJ1tHx5MkZDcnBxeVp4ZFE/resume.html" target="_blank">My résumé</a></li>
+</ul>
+<br style="clear: both;">
+<dl class="profile-datablock">
+        <dt class="profile-data">
+      <a class="sociallink inlink" href="http://www.linkedin.com/in/benoitschweblin" rel="author"></a>
+      <a class="sociallink twlink" href="https://twitter.com/Benweet" rel="author"></a>
+      <a class="sociallink fblink" href="http://www.facebook.com/public/Benoit-Schweblin" rel="author"></a>
+      <a class="sociallink gplink" href="https://plus.google.com/109528932743706586931" rel="author"></a>
+        </dt>
+
+      </dl>
+</div>
+<div class="clear"></div>
+<span class="widget-item-control">
+<span class="item-control blog-admin">
+<a class="quickedit" href="http://www.blogger.com/rearrange?blogID=5845022975130610385&amp;widgetType=HTML&amp;widgetId=HTML2&amp;action=editWidget&amp;sectionId=lowerbar4" onclick="return _WidgetManager._PopupConfig(document.getElementById(&quot;HTML2&quot;));" target="configHTML2" title="Edit">
+<img alt="" height="18" src="./Run Jetty in the Maven life-cycle_files/icon18_wrench_allbkg.png" width="18">
+</a>
+</span>
+</span>
+<div class="clear"></div>
+</div></div>
+</div>
+<div class="clear">
+</div>
+</div></div>
+<div id="footer">
+<div class="fcred">
+© 2013 <a href="http://www.benoitschweblin.com/">Benoit Schweblin 's/blo//g'</a> | Blogger by <a href="http://besttheme.net/">Best Theme</a> | <a href="http://premiumbloggerthemes.com/">PBT</a>  - <br> 
+Designs by <a href="http://www.fabthemes.com/" title="WordPress Themes Designs">Fab Themes</a>
+</div>
+<div class="clear"></div>
+</div>
+<div class="clear"></div>
+</div><iframe name="oauth2relay2096818357" id="oauth2relay2096818357" src="./Run Jetty in the Maven life-cycle_files/postmessageRelay.html" tabindex="-1" aria-hidden="true" style="width: 1px; height: 1px; position: absolute; top: -100px;"></iframe>
+<div class="clear"></div>
+<!-- Place this tag after the last +1 button tag. -->
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<script type="text/javascript">
+          var _gaq = _gaq || [];
+          _gaq.push(['_setAccount', 'UA-39510843-1']);
+          _gaq.push(['_trackPageview']);
+          (function() {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = (document.location.protocol == 'https:' ?
+                      'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+          })();
+        </script>
+
+<script type="text/javascript" src="./Run Jetty in the Maven life-cycle_files/1235661846-widgets.js.download"></script>
+<script type="text/javascript" src="./Run Jetty in the Maven life-cycle_files/plusone.js.download" gapi_processed="true"></script>
+<script type="text/javascript">
+window['__wavt'] = 'AOuZoY5KpTisxrTxEMGuAXPPQwmetv6W6w:1477576754431';_WidgetManager._Init('//www.blogger.com/rearrange?blogID\x3d5845022975130610385','//www.benoitschweblin.com/2013/03/run-jetty-in-maven-life-cycle.html','5845022975130610385');
+_WidgetManager._SetDataContext([{'name': 'blog', 'data': {'blogId': '5845022975130610385', 'bloggerUrl': 'https://www.blogger.com', 'title': 'Benoit Schweblin \x27s/blo//g\x27', 'pageType': 'item', 'postId': '1032903560279782968', 'url': 'http://www.benoitschweblin.com/2013/03/run-jetty-in-maven-life-cycle.html', 'canonicalUrl': 'http://www.benoitschweblin.com/2013/03/run-jetty-in-maven-life-cycle.html', 'homepageUrl': 'http://www.benoitschweblin.com/', 'searchUrl': 'http://www.benoitschweblin.com/search', 'canonicalHomepageUrl': 'http://www.benoitschweblin.com/', 'blogspotFaviconUrl': 'http://www.benoitschweblin.com/favicon.ico', 'enabledCommentProfileImages': true, 'gPlusViewType': 'FILTERED_POSTMOD', 'adultContent': false, 'analyticsAccountNumber': 'UA-39510843-1', 'useUniversalAnalytics': false, 'pageName': 'Run Jetty in the Maven life-cycle', 'pageTitle': 'Benoit Schweblin \x27s/blo//g\x27: Run Jetty in the Maven life-cycle', 'metaDescription': 'In the Java EE kingdom, JBoss Application Server is king. But sometimes it\x27s nice to have a lighter container like Jetty to run during our development phases.', 'encoding': 'UTF-8', 'locale': 'en_GB', 'localeUnderscoreDelimited': 'en_gb', 'isPrivate': false, 'isMobile': false, 'isMobileRequest': false, 'mobileClass': '', 'isPrivateBlog': false, 'languageDirection': 'ltr', 'feedLinks': '\x3clink rel\x3d\x22alternate\x22 type\x3d\x22application/atom+xml\x22 title\x3d\x22Benoit Schweblin \x26#39;s/blo//g\x26#39; - Atom\x22 href\x3d\x22http://www.benoitschweblin.com/feeds/posts/default\x22 /\x3e\n\x3clink rel\x3d\x22alternate\x22 type\x3d\x22application/rss+xml\x22 title\x3d\x22Benoit Schweblin \x26#39;s/blo//g\x26#39; - RSS\x22 href\x3d\x22http://www.benoitschweblin.com/feeds/posts/default?alt\x3drss\x22 /\x3e\n\x3clink rel\x3d\x22service.post\x22 type\x3d\x22application/atom+xml\x22 title\x3d\x22Benoit Schweblin \x26#39;s/blo//g\x26#39; - Atom\x22 href\x3d\x22https://www.blogger.com/feeds/5845022975130610385/posts/default\x22 /\x3e\n\n\x3clink rel\x3d\x22alternate\x22 type\x3d\x22application/atom+xml\x22 title\x3d\x22Benoit Schweblin \x26#39;s/blo//g\x26#39; - Atom\x22 href\x3d\x22http://www.benoitschweblin.com/feeds/1032903560279782968/comments/default\x22 /\x3e\n', 'meTag': '', 'openIdOpTag': '', 'googleProfileUrl': 'https://plus.google.com/109528932743706586931', 'postImageThumbnailUrl': 'http://2.bp.blogspot.com/-xIRa1eIHbY4/UTvtIVot4XI/AAAAAAAADH8/bkSjY2_P5jg/s72-c/jetty_logo.png', 'postImageUrl': 'http://2.bp.blogspot.com/-xIRa1eIHbY4/UTvtIVot4XI/AAAAAAAADH8/bkSjY2_P5jg/s640/jetty_logo.png', 'mobileHeadScript': '', 'adsenseHostId': 'ca-host-pub-1556223355139109', 'ieCssRetrofitLinks': '\x3c!--[if IE]\x3e\x3cscript type\x3d\x22text/javascript\x22 src\x3d\x22https://www.blogger.com/static/v1/jsbin/3382512426-ieretrofit.js\x22\x3e\x3c/script\x3e\n\x3c![endif]--\x3e', 'view': '', 'dynamicViewsCommentsSrc': '//www.blogblog.com/dynamicviews/4224c15c4e7c9321/js/comments.js', 'dynamicViewsScriptSrc': '//www.blogblog.com/dynamicviews/c258b0f953fb615c', 'plusOneApiSrc': 'https://apis.google.com/js/plusone.js', 'sharing': {'platforms': [{'name': 'Get link', 'key': 'link', 'shareMessage': 'Get link', 'target': ''}, {'name': 'Facebook', 'key': 'facebook', 'shareMessage': 'Share to Facebook', 'target': 'facebook'}, {'name': 'BlogThis!', 'key': 'blogThis', 'shareMessage': 'BlogThis!', 'target': 'blog'}, {'name': 'Twitter', 'key': 'twitter', 'shareMessage': 'Share to Twitter', 'target': 'twitter'}, {'name': 'Pinterest', 'key': 'pinterest', 'shareMessage': 'Share to Pinterest', 'target': 'pinterest'}, {'name': 'Google+', 'key': 'googlePlus', 'shareMessage': 'Share to Google+', 'target': 'googleplus'}, {'name': 'Email', 'key': 'email', 'shareMessage': 'Email', 'target': 'email'}], 'googlePlusShareButtonWidth': 300, 'googlePlusBootstrap': '\x3cscript type\x3d\x22text/javascript\x22\x3ewindow.___gcfg \x3d {\x27lang\x27: \x27en_GB\x27};\x3c/script\x3e'}}}, {'name': 'features', 'data': {'widgetVisibility': true}}, {'name': 'messages', 'data': {'linkCopiedToClipboard': 'Link copied to clipboard', 'postLink': 'Post link'}}, {'name': 'template', 'data': {'name': 'custom', 'localizedName': 'Custom', 'isResponsive': false, 'isAlternateRendering': false, 'isCustom': true}}, {'name': 'view', 'data': {'classic': {'name': 'classic', 'url': '?view\x3dclassic'}, 'flipcard': {'name': 'flipcard', 'url': '?view\x3dflipcard'}, 'magazine': {'name': 'magazine', 'url': '?view\x3dmagazine'}, 'mosaic': {'name': 'mosaic', 'url': '?view\x3dmosaic'}, 'sidebar': {'name': 'sidebar', 'url': '?view\x3dsidebar'}, 'snapshot': {'name': 'snapshot', 'url': '?view\x3dsnapshot'}, 'timeslide': {'name': 'timeslide', 'url': '?view\x3dtimeslide'}, 'isMobile': false, 'title': 'Run Jetty in the Maven life-cycle', 'description': 'In the Java EE kingdom, JBoss Application Server is king. But sometimes it\x27s nice to have a lighter container like Jetty to run during our development phases.', 'featuredImage': 'http://2.bp.blogspot.com/-xIRa1eIHbY4/UTvtIVot4XI/AAAAAAAADH8/bkSjY2_P5jg/s640/jetty_logo.png', 'url': 'http://www.benoitschweblin.com/2013/03/run-jetty-in-maven-life-cycle.html', 'type': 'item', 'isSingleItem': true, 'isMultipleItems': false, 'isError': false, 'isPage': false, 'isPost': true, 'isHomepage': false, 'isArchive': false, 'isSearch': false, 'postId': 1032903560279782968}}]);
+_WidgetManager._RegisterWidget('_HeaderView', new _WidgetInfo('Header1', 'header', null, document.getElementById('Header1'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_BlogView', new _WidgetInfo('Blog1', 'main', null, document.getElementById('Blog1'), {'cmtInteractionsEnabled': false, 'lightboxEnabled': true, 'lightboxModuleUrl': 'https://www.blogger.com/static/v1/jsbin/3465174987-lbx__en_gb.js', 'lightboxCssUrl': 'https://www.blogger.com/static/v1/v-css/368954415-lightbox_bundle.css'}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_HTMLView', new _WidgetInfo('HTML3', 'sidebar', null, document.getElementById('HTML3'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_ProfileView', new _WidgetInfo('Profile1', 'sidebar', null, document.getElementById('Profile1'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_LabelView', new _WidgetInfo('Label6', 'sidebar', null, document.getElementById('Label6'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_PopularPostsView', new _WidgetInfo('PopularPosts1', 'sidebar', null, document.getElementById('PopularPosts1'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_BlogArchiveView', new _WidgetInfo('BlogArchive1', 'sidebar', null, document.getElementById('BlogArchive1'), {'languageDirection': 'ltr', 'loadingMessage': 'Loading...'}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_SubscribeView', new _WidgetInfo('Subscribe1', 'sidebar', null, document.getElementById('Subscribe1'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_NavbarView', new _WidgetInfo('Navbar1', 'sidebar', null, document.getElementById('Navbar1'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_BlogSearchView', new _WidgetInfo('BlogSearch1', 'sidebar', null, document.getElementById('BlogSearch1'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_HTMLView', new _WidgetInfo('HTML1', 'sidebar', null, document.getElementById('HTML1'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_LabelView', new _WidgetInfo('Label2', 'lowerbar1', null, document.getElementById('Label2'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_HTMLView', new _WidgetInfo('HTML2', 'lowerbar4', null, document.getElementById('HTML2'), {}, 'displayModeFull'));
+</script>
+<iframe id="rufous-sandbox" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" style="position: absolute; visibility: hidden; display: none; width: 0px; height: 0px; padding: 0px; border: none;" src="./Run Jetty in the Maven life-cycle_files/saved_resource.html"></iframe></body></html>

@@ -1,0 +1,85 @@
+
+
+document.write(' \
+<style type="text/css" media="screen">\
+	 .dsq-widget ul.dsq-widget-list {\
+	 padding: 0;\
+	 margin: 0;\
+	 text-align: left;\
+	 }\
+	 img.dsq-widget-avatar {\
+	 width: 32px;\
+	 height: 32px;\
+	 border: 0px;\
+	 margin: 0px;\
+	 padding: 0px 3px 3px 0px;\
+	 float: left;\
+	 }\
+	 a.dsq-widget-user {\
+	 font-weight: bold;\
+	 }\
+	 a.dsq-widget-thread {\
+	 font-weight: bold;\
+	 }\
+	 p.dsq-widget-meta {\
+	 clear: both;\
+	 font-size: 80%;\
+	 padding: 0;\
+	 margin: 0;\
+	 }\
+	 li.dsq-widget-item {\
+	 margin: 15px 0;\
+	 list-style-type: none;\
+	 clear: both;\
+	 }\
+	 span.dsq-widget-clout {\
+	 padding: 0 2px;\
+	 background-color: #ff7300;\
+	 color: #fff;\
+	 }\
+	 table.dsq-widget-horiz td {\
+	 padding-right: 15px;\
+	 }\
+	 .dsq-widget-comment p {\
+	 display: inline;\
+	 }\
+	 </style>\
+	 <ul class="dsq-widget-list">\
+	 <li class="dsq-widget-item">\
+	 <a href="https://disqus.com/by/dionysosz/"><img class="dsq-widget-avatar" src="//a.disquscdn.com/uploads/users/15487/2004/avatar92.jpg?1469415329"></a>\
+	 <a class="dsq-widget-user" href="https://disqus.com/by/dionysosz/">Dionysos</a>\
+	 <span class="dsq-widget-comment"><p>What is the theme used in the image?</p></span>\
+	 <p class="dsq-widget-meta"><a href="http://www.omgubuntu.co.uk/2016/10/spaceview-indicator-applet-ubuntu">Keep An Eye On Your Disks With SpaceView for Ubuntu</a>&nbsp;&middot;&nbsp;<a href="http://www.omgubuntu.co.uk/2016/10/spaceview-indicator-applet-ubuntu#comment-2975762737">1 hour ago</a></p>\
+	 </li>\
+	 <li class="dsq-widget-item">\
+	 <a href="https://disqus.com/by/alkaef/"><img class="dsq-widget-avatar" src="//a.disquscdn.com/uploads/users/8085/1926/avatar92.jpg?1456562875"></a>\
+	 <a class="dsq-widget-user" href="https://disqus.com/by/alkaef/">The Global Elite</a>\
+	 <span class="dsq-widget-comment"><p>pip3 install --upgrade pip</p></span>\
+	 <p class="dsq-widget-meta"><a href="http://www.omgubuntu.co.uk/?p=114300">Using Twitter From the Command Line Is Actually Really Fun</a>&nbsp;&middot;&nbsp;<a href="http://www.omgubuntu.co.uk/?p=114300#comment-2975733419">2 hours ago</a></p>\
+	 </li>\
+	 <li class="dsq-widget-item">\
+	 <a href="https://disqus.com/by/baseljhamadeh/"><img class="dsq-widget-avatar" src="//a.disquscdn.com/uploads/users/8377/8785/avatar92.jpg?1477802001"></a>\
+	 <a class="dsq-widget-user" href="https://disqus.com/by/baseljhamadeh/">Basel J. Hamadeh</a>\
+	 <span class="dsq-widget-comment"><p>I think its more convenient than it is fun.</p></span>\
+	 <p class="dsq-widget-meta"><a href="http://www.omgubuntu.co.uk/?p=114300">Using Twitter From the Command Line Is Actually Really Fun</a>&nbsp;&middot;&nbsp;<a href="http://www.omgubuntu.co.uk/?p=114300#comment-2975656405">4 hours ago</a></p>\
+	 </li>\
+	 <li class="dsq-widget-item">\
+	 <a href="https://disqus.com/by/baseljhamadeh/"><img class="dsq-widget-avatar" src="//a.disquscdn.com/uploads/users/8377/8785/avatar92.jpg?1477802001"></a>\
+	 <a class="dsq-widget-user" href="https://disqus.com/by/baseljhamadeh/">Basel J. Hamadeh</a>\
+	 <span class="dsq-widget-comment"><p>sudo apt-get install python-setuptools<br>for python3  <br>sudo apt-get install python3-setuptools</p></span>\
+	 <p class="dsq-widget-meta"><a href="http://www.omgubuntu.co.uk/?p=114300">Using Twitter From the Command Line Is Actually Really Fun</a>&nbsp;&middot;&nbsp;<a href="http://www.omgubuntu.co.uk/?p=114300#comment-2975654489">4 hours ago</a></p>\
+	 </li>\
+	 <li class="dsq-widget-item">\
+	 <a href="https://disqus.com/by/SinonKonno/"><img class="dsq-widget-avatar" src="//a.disquscdn.com/uploads/users/21267/1372/avatar92.jpg?1471625697"></a>\
+	 <a class="dsq-widget-user" href="https://disqus.com/by/SinonKonno/">Sinon Konno</a>\
+	 <span class="dsq-widget-comment"><p>Windows 10 Redstone 1 also still has screensavers, but they have too be enabled as they are...</p></span>\
+	 <p class="dsq-widget-meta"><a href="http://www.omgubuntu.co.uk/2016/10/linux-mint-18-1-offer-useful-screensaver">Linux Mint 18.1 To Offer a More Useful Screensaver</a>&nbsp;&middot;&nbsp;<a href="http://www.omgubuntu.co.uk/2016/10/linux-mint-18-1-offer-useful-screensaver#comment-2975601064">5 hours ago</a></p>\
+	 </li>\
+	 <li class="dsq-widget-item">\
+	 <a href="https://disqus.com/by/killname/"><img class="dsq-widget-avatar" src="//a.disquscdn.com/uploads/users/150/5990/avatar92.jpg?1477791080"></a>\
+	 <a class="dsq-widget-user" href="https://disqus.com/by/killname/">Mario Abarca</a>\
+	 <span class="dsq-widget-comment"><p>It is still available on the software center of Ubuntu-GNOME 16.10. Can\'t speak for Ubuntu 16.10...</p></span>\
+	 <p class="dsq-widget-meta"><a href="http://www.omgubuntu.co.uk/?p=113414">16 Things To Do After Installing Ubuntu 16.10</a>&nbsp;&middot;&nbsp;<a href="http://www.omgubuntu.co.uk/?p=113414#comment-2975506214">7 hours ago</a></p>\
+	 </li>\
+	 </ul>\
+');

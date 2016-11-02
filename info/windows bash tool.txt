@@ -1,0 +1,27 @@
+From cmd:
+lxrun /setdefaultuser root
+
+From bash as root:
+
+wget http://mirrors.kernel.org/ubuntu/pool/main/s/sudo/sudo_1.8.9p5-1ubuntu1.1_amd64.deb
+wget http://mirrors.kernel.org/ubuntu/pool/main/p/procps/procps_3.3.9-1ubuntu2_amd64.deb
+wget http://mirrors.kernel.org/ubuntu/pool/main/s/strace/strace_4.8-1ubuntu5_amd64.deb
+dpkg -i sudo_1.8.9p5-1ubuntu1.1_amd64.deb
+dpkg -i procps_3.3.9-1ubuntu2_amd64.deb
+dpkg -i strace_4.8-1ubuntu5_amd64.deb
+
+
+----------------------------------------------------------------
+
+
+lxrun /setdefaultuser chaveces
+bash -c "ls -ltra"
+bash -c "vi"
+
+
+sudo update-alternatives --install /usr/bin/java java \
+               /usr/lib/jvm/java-8-oracle/jre/bin/java 1100
+
+sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/java-8-oracle/jre/bin/java 1100
+sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java 1100
+

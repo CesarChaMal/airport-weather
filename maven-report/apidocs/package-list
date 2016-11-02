@@ -1,0 +1,8 @@
+com.crossover.trial.airport.context
+com.crossover.trial.airport.context.services
+com.crossover.trial.execs
+com.crossover.trial.rest
+com.crossover.trial.rest.helpers
+com.crossover.trial.util
+com.crossover.trial.weather.context
+com.crossover.trial.weather.context.exceptions

@@ -1,0 +1,107 @@
+/*
+Theme Name:     OMG! Ubuntu! Unified Child Theme
+Theme URI:      http://www.omgubuntu.co.uk
+Description:    OMG! Ubuntu!-specific child theme of OMG! Unified
+Author:         Sam Tran
+Author URI:     http://samvtran.com
+Template:       omgunified
+Version:        3.5
+*/
+@import url(../omgunified/style.css?a98d93);
+.site-logo {
+  top: -32px;
+  left: 20px;
+  width: 150px;
+}
+.site-logo:hover {
+  -webkit-transform: rotate(-5deg);
+  -moz-transform: rotate(-5deg);
+  -ms-transform: rotate(-5deg);
+  -o-transform: rotate(-5deg);
+  transform: rotate(-5deg);
+}
+@media only screen and (max-width: 800px) {
+  .site-logo {
+    top: -20px;
+    width: 120px;
+  }
+}
+/* Light accent replacements */
+h2 a:hover {color: #f15d22 }
+h3 { color: #363636 }
+h4 { color: #f15d22 }
+a { color: #f15d22 }
+blockquote { border-color: #f15d22 }
+.searchbox button { background: #f15d22 }
+.banner-slideshow .rslides_tabs li a:hover { background: #f15d22 }
+.banner-slideshow .rslides_tabs .rslides_here a { background: #f15d22 }
+.omg-dropdown li a:hover { color: #f15d22 }
+.vignette .thumbnail-overlay .category a { background: #f15d22 }
+.entry-meta .author a, .entry-meta .comments-link a, .single .entry-meta .category-list a { color: #f15d22 }
+.single .source-link a { color: #f15d22 }
+.single .tag-links a { background: #f15d22 }
+.gallery-item-container { background: #f15d22; border: 2px solid #f15d22 }
+.gallery-item-container:hover { outline: 5px solid #f15d22 }
+.single .mejs-container .mejs-controls { background: #f15d22 }
+.single .mejs-controls .mejs-time-rail .mejs-time-current { background: #dd4814 }
+.wp-caption .wp-caption-text { background: #f15d22 }
+.review-box .stars { color: #f15d22 }
+#nav-below .pagination .current { background: #f15d22 }
+#nav-below a {color: #f15d22 }
+.videos-widget .video-post p { background: #f15d22 }
+.sidebar .widget_calendar table a { color: #f15d22 }
+.sidebar .widget_calendar table th { color: #f15d22 }
+.sidebar .widget_calendar table tbody td:hover { background: #f15d22 }
+.omg-widgets-quotes .text:before { color: #f15d22 }
+.omg-widgets-events .day { color: #f15d22 }
+.sidebar .omg-widgets-events a { color: #f15d22 }
+.omg-widgets-social .network > a:hover { color: #f15d22 }
+.page-footer .navigation > li > a { color: #f15d22 }
+.page-footer .colophon p a { color: #f15d22 }
+.page-search { border-color: #f15d22 }
+.page-search button { background: #f15d22 }
+.pull-quote-right p, .pull-quote-left p { border-color: #f15d22 }
+.page-footer .social a:hover { color: #f15d22 }
+/* Web store === USC for backwards compatibility */
+a.web-store-link, a.web-store-link:before {
+  background: #dd4814;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #dd4814), color-stop(100%, #bc3d11));
+  background-image: -webkit-linear-gradient(#dd4814, #bc3d11);
+  background-image: -moz-linear-gradient(#dd4814, #bc3d11);
+  background-image: -o-linear-gradient(#dd4814, #bc3d11);
+  background-image: linear-gradient(#dd4814, #bc3d11);
+}
+a.web-store-link { border: 1px solid #dd4814 }
+a.web-store-link:hover { background: #97310e }
+a.web-store-link:after { content: "\e106" }
+a.web-store-link:before { border-right: 1px solid #97310e }
+@media only screen and (max-width: 800px) {
+  #category-list .footer a { color: #f15d22 }
+}
+/* Dark accent replacements */
+.branding { background: #5e2750 }
+.single .source-link a:hover { color: #5e2750 }
+.related_post li:hover img { background: #f15d22; outline-color: #f15d22 }
+
+/* Disqus button */
+.omg-disqus-button {
+  text-align: center;
+}
+#on-demand {
+  display: inline-block;
+  font-size: 18px;
+  padding: 10px 20px;
+  background: #f15d22;
+  color: white;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  -webkit-transition: 750ms background ease;
+  -moz-transition: 750ms background ease;
+  -ms-transition: 750ms background ease;
+  -o-transition: 750ms background ease;
+  transition: 750ms background ease;
+}
+#on-demand:hover {
+  background: #dd4814;
+}
